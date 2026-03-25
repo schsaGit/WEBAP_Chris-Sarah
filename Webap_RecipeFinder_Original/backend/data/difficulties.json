@@ -1,0 +1,23 @@
+{
+  "1": {
+    "id": 1,
+    "name": "Easy",
+    "level": 1,
+    "stars": "⭐",
+    "color": "#d4edda"
+  },
+  "2": {
+    "id": 2,
+    "name": "Medium",
+    "level": 2,
+    "stars": "⭐⭐",
+    "color": "#fff3cd"
+  },
+  "3": {
+    "id": 3,
+    "name": "Hard",
+    "level": 3,
+    "stars": "⭐⭐⭐",
+    "color": "#f8d7da"
+  }
+}
