@@ -1,23 +1,20 @@
-// ingredients.js - loads the ingredient filter panel, handles checkbox selection, and filters recipes
+// ingredients.js - Ingredient panel, checkbox handling, and filter by ingredients
 
-// fetches all ingredients from the API and builds the collapsible category panels
 function loadIngredients() {
     apiFetchIngredients(function(data) {
-        const ingredientsByCategory = {}; // will hold ingredients grouped by their category name
+        const ingredientsByCategory = {};
 
-        // groups each ingredient into its category bucket
         data.forEach(ingredient => {
-            const category = ingredient.category || 'Other'; // uses 'Other' if the ingredient has no category
+            const category = ingredient.category || 'Other';
             if (!ingredientsByCategory[category]) {
-                ingredientsByCategory[category] = []; // creates the category bucket if it doesn't exist yet
+                ingredientsByCategory[category] = [];
             }
             ingredientsByCategory[category].push(ingredient);
         });
 
-        const sortedCategories = Object.keys(ingredientsByCategory).sort(); // sorts categories alphabetically
+        const sortedCategories = Object.keys(ingredientsByCategory).sort();
         let html = '';
 
-        // builds a collapsible section for each category
         sortedCategories.forEach(category => {
             html += `
                 <div class="ingredient-category">
@@ -25,11 +22,9 @@ function loadIngredients() {
                         <strong>${category}</strong> <span class="toggle-icon">▶</span>
                     </div>
                     <div class="ingredient-category-items collapsed" data-category="${category}">
-            `; // starts collapsed by default (the CSS 'collapsed' class hides the items)
-
-            // adds a checkbox for each ingredient in this category, sorted alphabetically
+            `;
             ingredientsByCategory[category]
-                .sort((a, b) => a.name.localeCompare(b.name)) // localeCompare sorts strings correctly including special chars
+                .sort((a, b) => a.name.localeCompare(b.name))
                 .forEach(ingredient => {
                     html += `
                         <div class="ingredient-item" data-id="${ingredient.pk_ingredients}" data-category="${category}">
@@ -41,40 +36,37 @@ function loadIngredients() {
             html += `</div></div>`;
         });
 
-        $('#ingredients-list').html(html); // inserts the full ingredient panel into the page
+        $('#ingredients-list').html(html);
 
-        // clicking a category header toggles its ingredient list open or closed
         $('.ingredient-category-header').click(function() {
             const category = $(this).data('category');
             const items = $(`.ingredient-category-items[data-category="${category}"]`);
-            items.toggleClass('collapsed'); // adds or removes the CSS class that hides the items
-            $(this).find('.toggle-icon').text(items.hasClass('collapsed') ? '▶' : '▼'); // updates the arrow icon
+            items.toggleClass('collapsed');
+            $(this).find('.toggle-icon').text(items.hasClass('collapsed') ? '▶' : '▼');
         });
 
-        // when a checkbox is checked or unchecked, updates the selectedIngredients array
         $('.ingredient-item input[type="checkbox"]').change(function() {
-            const id = $(this).closest('.ingredient-item').data('id'); // gets the ingredient ID from the parent element
+            const id = $(this).closest('.ingredient-item').data('id');
             if ($(this).is(':checked')) {
-                selectedIngredients.push(id); // adds the ID when checked
+                selectedIngredients.push(id);
             } else {
-                selectedIngredients = selectedIngredients.filter(i => i !== id); // removes the ID when unchecked
+                selectedIngredients = selectedIngredients.filter(i => i !== id);
             }
-            updateSelectedCount(); // updates the filter button label with the new count
+            updateSelectedCount();
         });
 
     }, function() {
-        $('#ingredients-list').html('<p style="color: red;">Error loading ingredients</p>'); // shown if the API call fails
+        $('#ingredients-list').html('<p style="color: red;">Error loading ingredients</p>');
     });
 }
 
-// filters the recipe list to show only recipes that have ALL of the selected ingredients
 function filterByIngredients() {
     if (selectedIngredients.length === 0) {
         alert('Please select at least one ingredient');
         return;
     }
 
-    const ingredientsStr = selectedIngredients.join(','); // turns the array into a comma-separated string for the URL
+    const ingredientsStr = selectedIngredients.join(',');
     $('#recipes-container').html('Searching recipes...');
 
     apiFetchFilterByIngredients(ingredientsStr, function(data) {
@@ -87,12 +79,11 @@ function filterByIngredients() {
                         <h3>${recipe.name}</h3>
                         <p>${recipe.description || ''}</p>
                         <div style="margin-bottom: 8px;">
-                            <small>⏱️ ${recipe.preparationTime} min</small> |
+                            <small>⏱️ ${recipe.preparationTime} min</small> | 
                             <small>Matching ingredients: ${recipe.matching_ingredients}/${recipe.total_ingredients}</small>
                         </div>
                 `;
 
-                // shows which selected ingredients this recipe has, grouped by category
                 if (recipe.matching_ingredients_by_category && Object.keys(recipe.matching_ingredients_by_category).length > 0) {
                     html += `<div style="background: #f9f9f9; padding: 8px; border-radius: 3px; margin-bottom: 8px;">`;
                     Object.keys(recipe.matching_ingredients_by_category).sort().forEach(category => {
@@ -102,7 +93,6 @@ function filterByIngredients() {
                     html += `</div>`;
                 }
 
-                // shows missing ingredients in red, or a green checkmark if none are missing
                 if (recipe.missing_ingredients > 0) {
                     html += `<p style="color: #d9534f;"><small>❌ Missing: ${recipe.missing_list.join(', ')}</small></p>`;
                 } else {
@@ -115,7 +105,6 @@ function filterByIngredients() {
             $('#recipes-container').html(html);
             $('#recipe-count').text(`(${data.count})`);
 
-            // clicking any result card opens that recipe's detail view
             $('.recipe-card').click(function() {
                 showRecipeDetail($(this).data('id'));
             });
@@ -128,7 +117,6 @@ function filterByIngredients() {
     });
 }
 
-// updates the filter button label to show how many ingredients are currently selected
 function updateSelectedCount() {
     const count = selectedIngredients.length;
     $('#filter-btn').text(count > 0 ? `Filter recipes (${count} ingredients)` : 'Filter recipes');
