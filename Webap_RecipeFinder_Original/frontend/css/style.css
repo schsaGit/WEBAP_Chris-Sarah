@@ -1,5 +1,7 @@
-/* Color Palette: FAF3E1, F5E7C6, FA8112, 222222 */
+/* Color Palette: FAF3E1 (cream), F5E7C6 (light tan), FA8112 (orange), 222222 (dark gray) */
 
+/* ── Reset / Base ─────────────────────────────────────────── */
+/* removes default margins and paddings from every element, and makes padding included in width calculations */
 * {
     margin: 0;
     padding: 0;
@@ -8,25 +10,27 @@
 
 body {
     font-family: Arial, sans-serif;
-    background-color: #FAF3E1;
+    background-color: #FAF3E1; /* cream background */
     color: #222222;
     line-height: 1.5;
 }
 
+/* ── Page wrapper ─────────────────────────────────────────── */
 #page {
-    background-color: #FA8112;
+    background-color: #FA8112; /* orange border visible around the app box */
     padding: 20px;
-    min-height: 100vh;
+    min-height: 100vh; /* fills the full screen height */
 }
 
 #app {
     background-color: #FAF3E1;
     padding: 30px;
-    max-width: 1400px;
-    margin: 0 auto;
+    max-width: 1400px; /* limits the app width on large screens */
+    margin: 0 auto;    /* centers the app horizontally */
     border-radius: 8px;
 }
 
+/* ── Headings ─────────────────────────────────────────────── */
 h1 {
     color: #222222;
     margin-bottom: 20px;
@@ -41,24 +45,24 @@ p {
     margin-bottom: 8px;
 }
 
-/* Buttons - subtle style */
+/* ── Buttons ──────────────────────────────────────────────── */
 button {
     background-color: #F5E7C6;
     color: #222222;
     border: 1px solid #222222;
     padding: 8px 16px;
-    cursor: pointer;
+    cursor: pointer; /* shows a pointer cursor on hover so users know it's clickable */
     border-radius: 4px;
     font-size: 14px;
 }
 
 button:hover {
-    background-color: #FA8112;
+    background-color: #FA8112; /* turns orange on hover */
     color: #FAF3E1;
     border-color: #FA8112;
 }
 
-/* Input fields */
+/* ── Input fields ─────────────────────────────────────────── */
 input[type="text"] {
     padding: 10px;
     border: 2px solid #F5E7C6;
@@ -69,11 +73,11 @@ input[type="text"] {
 }
 
 input[type="text"]:focus {
-    outline: none;
-    border-color: #FA8112;
+    outline: none;          /* removes the default blue browser outline */
+    border-color: #FA8112;  /* replaces it with an orange border */
 }
 
-/* Select dropdowns */
+/* ── Select dropdowns ─────────────────────────────────────── */
 select {
     padding: 8px;
     border: 2px solid #F5E7C6;
@@ -84,10 +88,10 @@ select {
     margin-bottom: 10px;
 }
 
-/* Ingredients list */
+/* ── Ingredient filter panel ──────────────────────────────── */
 #ingredients-list {
     max-height: 300px;
-    overflow-y: auto;
+    overflow-y: auto; /* adds a scrollbar when the list is too long */
     border: 2px solid #F5E7C6;
     background-color: #FAF3E1;
     padding: 10px;
@@ -99,13 +103,14 @@ select {
     margin-bottom: 5px;
 }
 
+/* the clickable header row for each ingredient category (e.g. "Vegetables ▶") */
 .ingredient-category-header {
     background-color: #F5E7C6;
     padding: 5px 8px;
     cursor: pointer;
     border-radius: 4px;
     margin-bottom: 2px;
-    user-select: none;
+    user-select: none; /* prevents text from being selected when clicking the header */
     font-size: 12px;
 }
 
@@ -114,10 +119,12 @@ select {
     color: #FAF3E1;
 }
 
+/* the list of ingredients inside a category */
 .ingredient-category-items {
     padding-left: 10px;
 }
 
+/* hides the ingredient list when the category is collapsed */
 .ingredient-category-items.collapsed {
     display: none;
 }
@@ -132,21 +139,22 @@ select {
     background-color: #F5E7C6;
 }
 
-/* Recipe container with scrollbar */
+/* ── Recipe list ──────────────────────────────────────────── */
+/* scrollable container that holds all the recipe cards */
 #recipes-container {
     max-height: 600px;
-    overflow-y: auto;
+    overflow-y: auto; /* adds a scrollbar when there are many recipes */
     padding-right: 10px;
 }
 
-/* Recipe cards */
+/* individual recipe card in the list */
 .recipe-card {
     border: 2px solid #F5E7C6;
     background-color: #FAF3E1;
     padding: 15px;
     margin-bottom: 15px;
     border-radius: 8px;
-    cursor: pointer;
+    cursor: pointer; /* shows a pointer so users know the card is clickable */
 }
 
 .recipe-card:hover {
@@ -155,7 +163,7 @@ select {
 }
 
 .recipe-card h3 {
-    color: #FA8112;
+    color: #FA8112; /* recipe name shows in orange */
     margin-bottom: 10px;
 }
 
@@ -169,6 +177,7 @@ select {
     margin-bottom: 8px;
 }
 
+/* row of tag badges (category and difficulty) shown below the recipe description */
 .recipe-tags {
     display: flex;
     gap: 15px;
@@ -190,22 +199,23 @@ select {
     font-size: 13px;
 }
 
-/* Images */
+/* small thumbnail image on each recipe card */
 .recipe-card img {
     width: 80px;
     height: 80px;
-    object-fit: cover;
-    float: left;
+    object-fit: cover;  /* crops the image to fill the box without stretching */
+    float: left;        /* image floats to the left so text wraps beside it */
     margin-right: 15px;
     border-radius: 4px;
     border: 2px solid #F5E7C6;
 }
 
-/* Detail view */
+/* ── Recipe detail view ───────────────────────────────────── */
 #recipe-detail {
-    position: relative;
+    position: relative; /* needed so the favorite heart button can be positioned in the corner */
 }
 
+/* top section of the detail view: large image on the left, recipe info on the right */
 .recipe-detail-header {
     display: flex;
     gap: 20px;
@@ -213,7 +223,7 @@ select {
 }
 
 .recipe-detail-image {
-    flex-shrink: 0;
+    flex-shrink: 0; /* prevents the image from shrinking when space is tight */
 }
 
 .recipe-detail-image img {
@@ -225,7 +235,7 @@ select {
 }
 
 .recipe-detail-info {
-    flex: 1;
+    flex: 1; /* takes up all remaining space next to the image */
 }
 
 .recipe-detail-info h2 {
@@ -237,7 +247,7 @@ select {
     margin-bottom: 10px;
 }
 
-/* Instructions and Ingredients side by side */
+/* two-column layout below the header: instructions take 2/3, ingredients take 1/3 */
 .recipe-content {
     display: flex;
     gap: 20px;
@@ -245,12 +255,12 @@ select {
 }
 
 .recipe-instructions {
-    flex: 2;
+    flex: 2; /* takes twice as much width as the ingredients column */
 }
 
 .recipe-ingredients {
     flex: 1;
-    min-width: 250px;
+    min-width: 250px; /* prevents the ingredients column from becoming too narrow */
 }
 
 .recipe-ingredients h3 {
@@ -264,26 +274,27 @@ select {
 
 .recipe-ingredients li {
     padding: 5px 0;
-    border-bottom: 1px solid #F5E7C6;
+    border-bottom: 1px solid #F5E7C6; /* light divider line between each ingredient */
 }
 
-/* Similar recipes */
+/* ── Similar recipes grid ─────────────────────────────────── */
 #similar-recipes-container {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: wrap; /* wraps cards to the next row if they don't fit */
     gap: 15px;
     max-height: 400px;
     overflow-y: auto;
     margin-top: 10px;
 }
 
+/* each similar recipe shows as a card taking 1/3 of the width */
 .similar-recipe-card {
     border: 2px solid #F5E7C6;
     background-color: #FAF3E1;
     padding: 10px;
     border-radius: 8px;
     cursor: pointer;
-    width: calc(33.333% - 10px);
+    width: calc(33.333% - 10px); /* three cards per row, accounting for the gap */
     box-sizing: border-box;
 }
 
@@ -298,7 +309,8 @@ select {
     font-size: 16px;
 }
 
-/* Favorite heart */
+/* ── Favorite heart button ────────────────────────────────── */
+/* positioned in the top-right corner of the detail view */
 .favorite-heart-detail {
     position: absolute;
     top: 0;
@@ -310,18 +322,19 @@ select {
     padding: 5px;
 }
 
-/* API Status */
+/* ── API Status indicator ─────────────────────────────────── */
 #api-status {
     color: #222222;
     font-size: 12px;
 }
 
-/* Back button */
+/* ── Back button ──────────────────────────────────────────── */
 #back-btn {
     margin-bottom: 20px;
 }
 
-/* Search highlight */
+/* ── Search highlight ─────────────────────────────────────── */
+/* orange badge used to highlight matching text in search results */
 .search-highlight {
     background-color: #FA8112;
     color: #FAF3E1;
@@ -329,12 +342,14 @@ select {
     border-radius: 3px;
 }
 
-/* Responsive: Stack on smaller screens */
+/* ── Responsive (small screens < 768px) ───────────────────── */
 @media (max-width: 768px) {
+    /* on small screens, stack instructions and ingredients vertically instead of side by side */
     .recipe-content {
         flex-direction: column;
     }
-    
+
+    /* on small screens, similar recipe cards take half the width instead of one third */
     .similar-recipe-card {
         width: calc(50% - 10px);
     }

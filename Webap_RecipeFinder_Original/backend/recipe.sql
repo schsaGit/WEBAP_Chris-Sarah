@@ -30,11 +30,12 @@ SET time_zone = "+00:00";
 -- Table structure for table `includes`
 --
 
+-- links recipes to their ingredients — one recipe can have many ingredients, one ingredient can be in many recipes
 CREATE TABLE `includes` (
-  `pkfk_recipe` int(11) NOT NULL,
-  `pkfk_ingredient` int(11) NOT NULL,
-  `amount` decimal(8,2) NOT NULL,
-  `unit` varchar(20) NOT NULL
+  `pkfk_recipe` int(11) NOT NULL,      -- the ID of the recipe (foreign key → recipes.pk_recipes)
+  `pkfk_ingredient` int(11) NOT NULL,  -- the ID of the ingredient (foreign key → ingredients.pk_ingredients)
+  `amount` decimal(8,2) NOT NULL,      -- how much of the ingredient is needed (e.g. 2.50)
+  `unit` varchar(20) NOT NULL          -- the unit of measurement (e.g. 'g', 'ml', 'tbsp', 'piece')
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -399,10 +400,11 @@ INSERT INTO `includes` (`pkfk_recipe`, `pkfk_ingredient`, `amount`, `unit`) VALU
 -- Table structure for table `ingredients`
 --
 
+-- stores all available ingredients that can be used in recipes
 CREATE TABLE `ingredients` (
-  `pk_ingredients` int(11) NOT NULL,
-  `name` varchar(50) NOT NULL,
-  `category` varchar(30) DEFAULT NULL
+  `pk_ingredients` int(11) NOT NULL, -- unique ID for each ingredient, auto-increments
+  `name` varchar(50) NOT NULL,       -- the ingredient's name (e.g. 'Garlic', 'Tomato')
+  `category` varchar(30) DEFAULT NULL -- the ingredient group (e.g. 'Vegetables', 'Spices', 'Dairy') — optional
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -571,16 +573,17 @@ INSERT INTO `ingredients` (`pk_ingredients`, `name`, `category`) VALUES
 -- Table structure for table `recipes`
 --
 
+-- stores all recipes with their full details
 CREATE TABLE `recipes` (
-  `pk_recipes` int(11) NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `description` text DEFAULT NULL,
-  `imageUrl` varchar(255) DEFAULT NULL,
-  `preparationTime` int(11) NOT NULL,
-  `category` int(11) NOT NULL,
-  `difficulty` int(11) NOT NULL,
-  `instructions` text NOT NULL,
-  `created` timestamp NOT NULL DEFAULT current_timestamp()
+  `pk_recipes` int(11) NOT NULL,       -- unique ID for each recipe, auto-increments
+  `name` varchar(100) NOT NULL,        -- the recipe's title (must be unique)
+  `description` text DEFAULT NULL,     -- a short summary of the dish (optional)
+  `imageUrl` varchar(255) DEFAULT NULL, -- URL to a photo of the dish (optional)
+  `preparationTime` int(11) NOT NULL,  -- total time in minutes to prepare and cook
+  `category` int(11) NOT NULL,         -- links to a category (1=Main Course, 2=Side Dish, 3=Soup, 4=Sweets)
+  `difficulty` int(11) NOT NULL,       -- links to a difficulty level (1=Easy, 2=Medium, 3=Hard)
+  `instructions` text NOT NULL,        -- the full step-by-step cooking instructions
+  `created` timestamp NOT NULL DEFAULT current_timestamp() -- automatically set when the recipe is inserted
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
