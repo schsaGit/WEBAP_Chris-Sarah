@@ -1,20 +1,23 @@
-// detail.js - Recipe detail view, similar recipes, and back navigation
+// detail.js - shows the full recipe detail view, similar recipes, and handles going back
 
+// switches from the list view to the detail view and loads a single recipe's full data
 function showRecipeDetail(recipeId) {
-    $('#recipes-section').hide();
-    $('#detail-section').show();
-    $('#recipe-detail').html('Loading details...');
-    currentView = 'detail';
+    $('#recipes-section').hide(); // hides the recipe list
+    $('#detail-section').show();  // shows the detail section
+    $('#recipe-detail').html('Loading details...'); // shows a loading message while waiting for the API
+    currentView = 'detail'; // updates the shared state variable so other code knows which view is active
 
     apiFetchRecipeDetail(recipeId, function(recipe) {
-        const isFavorite = favorites.includes(recipe.pk_recipes);
-        const heartIcon = isFavorite ? '❤️' : '🤍';
+        const isFavorite = favorites.includes(recipe.pk_recipes); // checks if this recipe is already in the favorites list
+        const heartIcon = isFavorite ? '❤️' : '🤍'; // picks the right heart icon
 
+        // starts building the detail HTML with the favorite heart button in the top-right corner
         let html = `
             <button class="favorite-heart-detail" data-id="${recipe.pk_recipes}">${heartIcon}</button>
             <div class="recipe-detail-header">
         `;
 
+        // adds the recipe image if it has one
         if (recipe.imageUrl) {
             html += `
                 <div class="recipe-detail-image">
@@ -23,6 +26,7 @@ function showRecipeDetail(recipeId) {
             `;
         }
 
+        // adds the recipe title and key info (description, category, difficulty, prep time)
         html += `
             <div class="recipe-detail-info">
                 <h2>${recipe.name}</h2>
@@ -42,30 +46,32 @@ function showRecipeDetail(recipeId) {
                 </div>
         `;
 
+        // adds the ingredients list if the recipe has any
         if (recipe.ingredients && recipe.ingredients.length > 0) {
             html += `
                 <div class="recipe-ingredients">
                     <h3>Ingredients:</h3>
                     <ul>`;
             recipe.ingredients.forEach(ing => {
-                html += `<li>${ing.amount} ${ing.unit} ${ing.name}</li>`;
+                html += `<li>${ing.amount} ${ing.unit} ${ing.name}</li>`; // one list item per ingredient
             });
             html += `</ul>
                 </div>`;
         }
 
         html += `</div>`;
-        html += `<button onclick="window.open('../backend/api/recipes.php?id=${recipeId}', '_blank')" style="margin-top: 20px;">Open API Endpoint</button>`;
+        html += `<button onclick="window.open('../backend/api/recipes.php?id=${recipeId}', '_blank')" style="margin-top: 20px;">Open API Endpoint</button>`; // debug button to view the raw JSON
 
-        $('#recipe-detail').html(html);
+        $('#recipe-detail').html(html); // inserts the full detail HTML into the page
 
+        // wires the heart button to toggle this recipe's favorite status
         $('.favorite-heart-detail').click(function() {
             const id = $(this).data('id');
             toggleFavorite(id);
-            $(this).text(favorites.includes(id) ? '❤️' : '🤍');
+            $(this).text(favorites.includes(id) ? '❤️' : '🤍'); // updates the icon immediately
         });
 
-        loadSimilarRecipes(recipeId);
+        loadSimilarRecipes(recipeId); // loads the similar recipes section below the detail
 
     }, function(xhr, status, error) {
         console.error('Error loading recipe:', status, error);
@@ -73,6 +79,7 @@ function showRecipeDetail(recipeId) {
     });
 }
 
+// fetches and displays recipes that share at least 3 ingredients with the current recipe
 function loadSimilarRecipes(recipeId) {
     apiFetchSimilarRecipes(recipeId, function(data) {
         if (data.similar_recipes && data.similar_recipes.length > 0) {
@@ -88,8 +95,9 @@ function loadSimilarRecipes(recipeId) {
                 `;
             });
             html += '</div>';
-            $('#recipe-detail').append(html);
+            $('#recipe-detail').append(html); // appends the similar recipes below the existing detail content
 
+            // clicking a similar recipe card opens that recipe's detail view
             $('.similar-recipe-card').click(function() {
                 showRecipeDetail($(this).data('id'));
             });
@@ -97,8 +105,9 @@ function loadSimilarRecipes(recipeId) {
     });
 }
 
+// switches back from the detail view to the recipe list
 function showRecipeList() {
-    $('#detail-section').hide();
-    $('#recipes-section').show();
-    currentView = 'list';
+    $('#detail-section').hide();  // hides the detail view
+    $('#recipes-section').show(); // shows the recipe list again
+    currentView = 'list'; // updates the shared state variable
 }
