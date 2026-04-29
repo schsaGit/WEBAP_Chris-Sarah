@@ -38,15 +38,16 @@ if (isset($_COOKIE["user"])) {
             $conn = connectDB();
 
             # prepare query
-            $query = "INSERT INTO `Users` (`username`, `password`, `name`, `pfp`)
-                  VALUES (?, ?, ?, ?)";
+            $role = 'user';
+            $query = "INSERT INTO `Users` (`username`, `password`, `name`, `pfp`, `role`)
+                  VALUES (?, ?, ?, ?, ?)";
             $stmt = mysqli_prepare($conn, $query);
 
             # prepared statement to avoid sql injections
             if ($stmt) {
 
                 # bind variables
-                mysqli_stmt_bind_param($stmt, 'ssss', $username, $hashedPassword, $name, $defaultPfp);
+                mysqli_stmt_bind_param($stmt, 'sssss', $username, $hashedPassword, $name, $defaultPfp, $role);
 
                 # execute query and check for failure
                 if (mysqli_stmt_execute($stmt)) {

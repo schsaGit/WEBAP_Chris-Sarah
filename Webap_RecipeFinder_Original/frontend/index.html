@@ -1,16 +1,10 @@
-<?php
-if (isset($_GET['page']) && $_GET['page'] === 'login') {
-    include '../backend/api/login.php';
-    exit;
-}
-?>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8"> <!-- tells the browser to use UTF-8 so special characters display correctly -->
     <title>Recipe Finder</title>
     <link rel="stylesheet" href="css/style.css"> <!-- loads the stylesheet for all visual styling -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script> <!-- loads jQuery from a CDN — must be before all other scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script> <!-- loads jQuery from a CDN -->
 </head>
 <body>
 <div id="page">
@@ -22,7 +16,8 @@ if (isset($_GET['page']) && $_GET['page'] === 'login') {
         <input type="text" id="search-input" placeholder="Search recipes..."> <!-- text field where the user types a search word -->
         <button id="search-btn">Search</button> <!-- triggers a recipe search using the text field value -->
         <button id="favorites-btn">❤️ Favorites</button> <!-- shows the user's saved favorite recipes -->
-        <a href="?page=login"><button>Login</button></a>
+        <a href="../backend/api/login.php"><button>Login</button></a>
+        <a href="../backend/admin.php"><button>Admin</button></a>
     </div>
 
     <!-- main two-column layout: left sidebar (filters) + right content area -->
@@ -86,14 +81,13 @@ if (isset($_GET['page']) && $_GET['page'] === 'login') {
 </div>
 
 <!-- Load order matters: state and api first, then feature modules, then event wiring, then entry point -->
-<!-- state.js and api.js must be first because all other files depend on them -->
-<script src="js/state.js"></script>      <!-- shared variables used across all modules -->
-<script src="js/api.js"></script>        <!-- functions that talk to the backend API -->
-<script src="js/recipes.js"></script>    <!-- loads and displays the recipe list -->
-<script src="js/ingredients.js"></script> <!-- loads the ingredient filter panel -->
-<script src="js/detail.js"></script>     <!-- shows the full recipe detail view -->
-<script src="js/favorites.js"></script>  <!-- manages saving and loading favorite recipes -->
-<script src="js/events.js"></script>     <!-- wires all button clicks and input events to their handlers -->
-<script src="js/app.js"></script>        <!-- entry point: starts the app after everything else is loaded -->
+<script src="js/state.js"></script>
+<script src="js/api.js"></script>
+<script src="js/recipes.js"></script>
+<script src="js/ingredients.js"></script>
+<script src="js/detail.js"></script>
+<script src="js/favorites.js"></script>
+<script src="js/events.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>
