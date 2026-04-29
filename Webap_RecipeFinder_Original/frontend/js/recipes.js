@@ -24,41 +24,66 @@ function loadCategories() {
 }
 
 // fetches recipes from the API (with optional filters) and displays them as cards
+// loads from BOTH local and spoonacular when no filter is active; falls back to local-only when category/difficulty is set
 function loadRecipes(params = {}) {
     $('#recipes-container').html('Loading recipes...'); // shows a loading message while waiting for the API
     $('#no-results').hide(); // hides the "No recipes found" message while loading
 
-    apiFetchRecipes(params, function(data) {
+    // only fall back to local-only when fetching by specific IDs (favorites);
+    // category/difficulty are translated to spoonacular params on the backend
+    const localOnly = !!params.ids;
+
+    const onSuccess = function(data) {
         if (data.recipes && data.recipes.length > 0) {
-            displayRecipes(data.recipes); // passes the recipe list to the display function
-            $('#recipe-count').text(`(${data.count})`); // shows the number of results next to the heading
+            displayRecipes(data.recipes);
+            $('#recipe-count').text(`(${data.count})`);
         } else {
             $('#recipes-container').html('');
-            $('#no-results').show(); // shows "No recipes found" when the list is empty
+            $('#no-results').show();
             $('#recipe-count').text('(0)');
         }
-    }, function() {
-        $('#recipes-container').html('Error loading recipes'); // shows an error message if the API call fails
-    });
+    };
+    const onFail = function() { $('#recipes-container').html('Error loading recipes'); };
+
+    if (localOnly) {
+        // local-only path (filters or favorite IDs)
+        apiFetchRecipes(params, function(data) {
+            (data.recipes || []).forEach(tagLocalRecipe); // ensure every recipe has source + prefixed id
+            onSuccess(data);
+        }, onFail);
+    } else {
+        apiFetchRecipesCombined(params, onSuccess, onFail);
+    }
 }
 
 // builds the HTML for a list of recipe cards and inserts them into the page
 function displayRecipes(recipes) {
     let html = '';
     recipes.forEach(recipe => {
+        // every recipe should have a string id like "local-7" or "spoon-640921"
+        // (tagLocalRecipe in api.js ensures local recipes get one)
+        const id = recipe.id || ('local-' + recipe.pk_recipes);
+        const isSpoon = recipe.source === 'spoonacular';
+
+        // small badge in the corner so users can tell at a glance which recipes are external
+        const sourceBadge = isSpoon
+            ? `<span class="recipe-source-badge spoon">SPOONACULAR</span>`
+            : '';
+
         let imageHtml = '';
         if (recipe.imageUrl) {
-            // creates an image tag only if the recipe has an image URL
-            imageHtml = `<img src="${recipe.imageUrl}" alt="${recipe.name}" style="width: 80px; height: 80px; object-fit: cover; float: left; margin-right: 15px; border-radius: 4px; border: 1px solid #ddd;">`;
+            // onerror hides the image if spoonacular's CDN 404s (which happens occasionally)
+            imageHtml = `<img src="${recipe.imageUrl}" alt="${recipe.name}" onerror="this.style.display='none'" style="width: 80px; height: 80px; object-fit: cover; float: left; margin-right: 15px; border-radius: 4px; border: 1px solid #ddd;">`;
         }
-        // builds the card HTML for each recipe using template literals (the backtick strings)
+
         html += `
-            <div class="recipe-card" data-id="${recipe.pk_recipes}">
+            <div class="recipe-card" data-id="${id}">
+                ${sourceBadge}
                 ${imageHtml}
                 <h3>${recipe.name}</h3>
                 <p>${recipe.description || ''}</p>
                 <div class="recipe-meta">
-                    <small>⏱️ ${recipe.preparationTime} min</small> |
+                    <small>⏱️ ${recipe.preparationTime}</small> |
                     <small>Ingredients: ${recipe.ingredient_count || '?'}</small>
                 </div>
                 <div class="recipe-tags">
@@ -72,6 +97,6 @@ function displayRecipes(recipes) {
 
     // attaches a click handler to every card so clicking opens that recipe's detail view
     $('.recipe-card').click(function() {
-        showRecipeDetail($(this).data('id')); // data-id holds the recipe's database ID
+        showRecipeDetail($(this).data('id')); // data-id is now the prefixed string id
     });
 }
