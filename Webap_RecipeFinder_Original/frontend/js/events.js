@@ -31,10 +31,12 @@ function setupEventListeners() {
     // filter button: shows only recipes that contain ALL selected ingredients
     $('#filter-btn').click(filterByIngredients);
 
-    // clear button: unchecks all ingredients, resets the count, and reloads all recipes
+    // clear button: unchecks all ingredients, resets the count, clears the search bar, and reloads all recipes
     $('#clear-btn').click(function() {
         selectedIngredients = [];
         $('.ingredient-item input[type="checkbox"]').prop('checked', false);
+        $('#ingredient-search').val('');
+        renderIngredients('');
         updateSelectedCount();
         loadRecipes(); // reloads the full mixed list (local + spoonacular)
     });
