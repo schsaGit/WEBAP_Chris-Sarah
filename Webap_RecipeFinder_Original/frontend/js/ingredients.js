@@ -2,6 +2,48 @@
 
 // exposed so events.js can call renderIngredients('') on clear
 let renderIngredients = function() {};
+let ingredientRecipeExamples = {}; // caches example recipes for each ingredient ID
+
+function getIngredientExampleHtml(ingredientId) {
+    const recipes = ingredientRecipeExamples[ingredientId];
+    if (recipes === undefined || recipes === null) {
+        return '<div class="ingredient-recipe-examples">Loading examples...</div>';
+    }
+    if (recipes.length === 0) {
+        return '<div class="ingredient-recipe-examples empty">No recipe examples</div>';
+    }
+    const names = recipes.map(r => r.name);
+    return `<div class="ingredient-recipe-examples">Used in: ${names.join(', ')}</div>`;
+}
+
+function fetchIngredientRecipeExamples(ingredientId) {
+    if (ingredientRecipeExamples.hasOwnProperty(ingredientId)) {
+        return;
+    }
+
+    ingredientRecipeExamples[ingredientId] = null; // mark as loading
+    apiFetchIngredientRecipeExamples(ingredientId, function(data) {
+        const recipes = (data && data.recipes) ? data.recipes : [];
+        ingredientRecipeExamples[ingredientId] = recipes;
+        $(`#ingredient-examples-${ingredientId}`).html(getIngredientExampleHtml(ingredientId));
+    }, function() {
+        ingredientRecipeExamples[ingredientId] = [];
+        $(`#ingredient-examples-${ingredientId}`).html('<div class="ingredient-recipe-examples empty">No recipe examples</div>');
+    });
+}
+
+function refreshVisibleIngredientExamples() {
+    $('.ingredient-item').each(function() {
+        const ingredientId = parseInt($(this).data('id'), 10);
+        if (Number.isNaN(ingredientId)) return;
+        const placeholder = $(`#ingredient-examples-${ingredientId}`);
+        if (ingredientRecipeExamples.hasOwnProperty(ingredientId)) {
+            placeholder.html(getIngredientExampleHtml(ingredientId));
+        } else {
+            fetchIngredientRecipeExamples(ingredientId);
+        }
+    });
+}
 
 // fetches all ingredients from the API and builds the collapsible category panels
 function loadIngredients() {
@@ -74,6 +116,7 @@ function loadIngredients() {
                             <div class="ingredient-item" data-id="${ingredient.pk_ingredients}" data-name="${ingredient.name}" data-category="${category}">
                                 <input type="checkbox" id="ing-${ingredient.pk_ingredients}" ${checked}>
                                 <label for="ing-${ingredient.pk_ingredients}">${ingredient.name}</label>
+                                <div class="ingredient-recipe-examples" id="ingredient-examples-${ingredient.pk_ingredients}">Loading examples...</div>
                             </div>
                         `;
                     });
@@ -86,6 +129,7 @@ function loadIngredients() {
                             <div class="ingredient-item" data-id="${ingredient.pk_ingredients}" data-name="${ingredient.name}" data-category="${category}">
                                 <input type="checkbox" id="ing-${ingredient.pk_ingredients}" ${checked}>
                                 <label for="ing-${ingredient.pk_ingredients}">${ingredient.name}</label>
+                                <div class="ingredient-recipe-examples" id="ingredient-examples-${ingredient.pk_ingredients}">Loading examples...</div>
                             </div>
                         `;
                     });
@@ -121,6 +165,8 @@ function loadIngredients() {
                 }
                 updateSelectedCount();
             });
+
+            refreshVisibleIngredientExamples();
         }
 
         // initial render with no filter

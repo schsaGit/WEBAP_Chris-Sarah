@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 29, 2026 at 01:34 PM
+-- Generation Time: Apr 29, 2026 at 08:47 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,8 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Database: `recipe`
 --
-CREATE DATABASE IF NOT EXISTS `recipe` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-USE `recipe`;
 
 -- --------------------------------------------------------
 
@@ -629,19 +627,21 @@ CREATE TABLE `users` (
   `username` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `created` timestamp NOT NULL DEFAULT current_timestamp(),
-  `name` varchar(255) DEFAULT NULL,
-  `pfp` varchar(255) DEFAULT NULL
+  `name` varchar(255) NOT NULL,
+  `pfp` varchar(255) NOT NULL DEFAULT 'https://shorturl.at/jkuPe',
+  `role` enum('user','administrator') NOT NULL DEFAULT 'user'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`pk_userId`, `username`, `password`, `created`, `name`, `pfp`) VALUES
-(1, 'masmu123', 'pass123', '2026-04-15 10:21:52', 'Max Mustermann', NULL),
-(2, 'masmu', '$2y$10$QdszpePskXfGrQp9enWm.OifdUqVZCvKA22xeR5LcQBVJb6QZjhTu', '2026-04-15 10:45:37', 'max', 'https://shorturl.at/jkuPe'),
-(3, 'masu', '$2y$10$3y0cPX1H5GIB9yL2q6T9y.ApHhQD/pNOgo8rG1aZjirwxea.WyRgy', '2026-04-15 10:57:50', 'Max', 'https://shorturl.at/jkuPe'),
-(4, 'barch473', '$2y$10$YDjHcM0Mo4AvO9yYihhAlejfiL9mJhoaiaCaJNnKvLsq7xWoaCyU6', '2026-04-21 08:25:40', 'barch473', 'https://shorturl.at/jkuPe');
+INSERT INTO `users` (`pk_userId`, `username`, `password`, `created`, `name`, `pfp`, `role`) VALUES
+(1, 'masmu123', 'pass123', '2026-04-15 10:21:52', 'Max Mustermann', 'https://shorturl.at/jkuPe', 'administrator'),
+(2, 'masmu', '$2y$10$QdszpePskXfGrQp9enWm.OifdUqVZCvKA22xeR5LcQBVJb6QZjhTu', '2026-04-15 10:45:37', 'max', 'https://shorturl.at/jkuPe', 'user'),
+(3, 'masu', '$2y$10$3y0cPX1H5GIB9yL2q6T9y.ApHhQD/pNOgo8rG1aZjirwxea.WyRgy', '2026-04-15 10:57:50', 'Max', 'https://shorturl.at/jkuPe', 'user'),
+(4, 'barch473', '$2y$10$YDjHcM0Mo4AvO9yYihhAlejfiL9mJhoaiaCaJNnKvLsq7xWoaCyU6', '2026-04-21 08:25:40', 'barch473', 'https://shorturl.at/jkuPe', 'administrator'),
+(5, 'admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi', '2026-04-29 00:00:00', 'Administrator', 'https://shorturl.at/jkuPe', 'administrator');
 
 --
 -- Indexes for dumped tables
@@ -694,7 +694,7 @@ ALTER TABLE `recipes`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `pk_userId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `pk_userId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Constraints for dumped tables

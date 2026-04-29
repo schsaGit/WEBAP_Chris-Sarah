@@ -26,12 +26,16 @@ $isLoggedIn = isset($_COOKIE['user']) && is_numeric($_COOKIE['user']);
         <button id="search-btn">Search</button> <!-- triggers a recipe search using the text field value -->
         <button id="favorites-btn">❤️ Favorites</button> <!-- shows the user's saved favorite recipes -->
 
+
         <?php if ($isLoggedIn): ?>
             <!-- "Create Your Own Recipe" button — only visible when the user is logged in -->
             <button id="create-recipe-btn" title="Create and submit your own recipe">🍳 Create Your Own Recipe</button>
         <?php endif; ?>
 
         <a href="?page=login"><button>Login</button></a>
+        <a href="../backend/api/login.php"><button>Login</button></a>
+        <a href="../backend/admin.php"><button>Admin</button></a>
+
     </div>
 
     <!-- main two-column layout: left sidebar (filters) + right content area -->
@@ -48,8 +52,7 @@ $isLoggedIn = isset($_COOKIE['user']) && is_numeric($_COOKIE['user']);
             </div>
 
             <button id="filter-btn">Filter recipes</button> <!-- filters recipes to show only those with ALL selected ingredients -->
-            <button id="clear-btn">Clear selection</button> <!-- unchecks all ingredients and reloads all recipes -->
-
+            <button id="clear-btn">Clear selection</button> <!-- unchecks all selected ingredients and reloads all recipes -->
             <h4>Category:</h4>
             <!-- dropdown for filtering by category (e.g. Main Course, Soup); options added by recipes.js -->
             <select id="category-filter">
