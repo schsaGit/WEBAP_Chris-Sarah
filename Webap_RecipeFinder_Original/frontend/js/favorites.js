@@ -1,26 +1,41 @@
 // favorites.js - handles adding/removing favorites and showing the favorites list
+// favorites are stored as prefixed string IDs ("local-7", "spoon-640921") so we can mix sources
 
 // adds or removes a recipe from favorites and saves the updated list to localStorage
 function toggleFavorite(recipeId) {
-    if (favorites.includes(recipeId)) {
-        favorites = favorites.filter(id => id !== recipeId); // removes the recipe ID from the array
+    const id = String(recipeId);
+    if (favorites.includes(id)) {
+        favorites = favorites.filter(f => f !== id);
     } else {
-        favorites.push(recipeId); // adds the recipe ID to the array
+        favorites.push(id);
     }
-    localStorage.setItem('favorites', JSON.stringify(favorites)); // saves the updated array to the browser (survives page refresh)
+    localStorage.setItem('favorites', JSON.stringify(favorites));
 
-    // updates the heart icon on the page: filled heart if favorited, empty heart if not
-    $(`.favorite-heart-detail[data-id="${recipeId}"]`).text(
-        favorites.includes(recipeId) ? '❤️' : '🤍'
+    // updates the heart icon for the matching button (selector handles both string and number data attributes)
+    $(`.favorite-heart-detail[data-id="${id}"]`).text(
+        favorites.includes(id) ? '❤️' : '🤍'
     );
 }
 
-// loads and displays all favorited recipes in the recipe list
+// loads and displays all favorited recipes — splits by source under the hood
 function showFavorites() {
     if (favorites.length === 0) {
-        $('#recipes-container').html('<p>No favorites yet</p>'); // shows a message if there are no favorites
+        $('#recipes-container').html('<p>No favorites yet</p>');
         $('#recipe-count').text('(0)');
         return;
     }
-    loadRecipes({ ids: favorites.join(',') }); // passes the favorite IDs to loadRecipes, which fetches and displays them
+
+    $('#recipes-container').html('Loading favorites...');
+    $('#no-results').hide();
+
+    apiFetchRecipesByIds(favorites, function(data) {
+        if (data.recipes && data.recipes.length > 0) {
+            displayRecipes(data.recipes);
+            $('#recipe-count').text(`(${data.count})`);
+        } else {
+            $('#recipes-container').html('');
+            $('#no-results').show();
+            $('#recipe-count').text('(0)');
+        }
+    });
 }
