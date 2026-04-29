@@ -1,5 +1,8 @@
 // ingredients.js - loads the ingredient filter panel, handles checkbox selection, and filters recipes
 
+// exposed so events.js can call renderIngredients('') on clear
+let renderIngredients = function() {};
+
 // fetches all ingredients from the API and builds the collapsible category panels
 function loadIngredients() {
     apiFetchIngredients(function(data) {
@@ -14,53 +17,119 @@ function loadIngredients() {
             ingredientsByCategory[category].push(ingredient);
         });
 
-        const sortedCategories = Object.keys(ingredientsByCategory).sort(); // sorts categories alphabetically
-        let html = '';
-
-        // builds a collapsible section for each category
+        // sort each category's ingredients alphabetically once and store for reuse during search
+        const sortedCategories = Object.keys(ingredientsByCategory).sort();
         sortedCategories.forEach(category => {
-            html += `
-                <div class="ingredient-category">
-                    <div class="ingredient-category-header" data-category="${category}">
-                        <strong>${category}</strong> <span class="toggle-icon">▶</span>
-                    </div>
-                    <div class="ingredient-category-items collapsed" data-category="${category}">
-            `; // starts collapsed by default (the CSS 'collapsed' class hides the items)
+            ingredientsByCategory[category].sort((a, b) => a.name.localeCompare(b.name));
+        });
 
-            // adds a checkbox for each ingredient in this category, sorted alphabetically
-            ingredientsByCategory[category]
-                .sort((a, b) => a.name.localeCompare(b.name))
-                .forEach(ingredient => {
-                    // data-name is added so we can send the names to spoonacular's filter endpoint
-                    html += `
-                        <div class="ingredient-item" data-id="${ingredient.pk_ingredients}" data-name="${ingredient.name}" data-category="${category}">
-                            <input type="checkbox" id="ing-${ingredient.pk_ingredients}">
-                            <label for="ing-${ingredient.pk_ingredients}">${ingredient.name}</label>
-                        </div>
-                    `;
+        // inject the search bar above the scrollable ingredient list, matching its width
+        if ($('#ingredient-search').length === 0) {
+            $('<input>', {
+                type: 'text',
+                id: 'ingredient-search',
+                placeholder: 'Search ingredients...'
+            }).insertBefore('#ingredients-list');
+        }
+
+        // builds the full ingredient HTML from the grouped data
+        // when totalVisible > 10 the category headers are shown; otherwise they are hidden
+        function buildIngredientHTML(filter) {
+            filter = (filter || '').toLowerCase().trim();
+            let html = '';
+            let totalVisible = 0;
+
+            // first pass: count how many items will be visible so we know whether to show categories
+            sortedCategories.forEach(category => {
+                ingredientsByCategory[category].forEach(ingredient => {
+                    if (!filter || ingredient.name.toLowerCase().includes(filter)) {
+                        totalVisible++;
+                    }
                 });
-            html += `</div></div>`;
-        });
+            });
 
-        $('#ingredients-list').html(html);
+            const showCategories = totalVisible > 10;
 
-        // clicking a category header toggles its ingredient list open or closed
-        $('.ingredient-category-header').click(function() {
-            const category = $(this).data('category');
-            const items = $(`.ingredient-category-items[data-category="${category}"]`);
-            items.toggleClass('collapsed');
-            $(this).find('.toggle-icon').text(items.hasClass('collapsed') ? '▶' : '▼');
-        });
+            sortedCategories.forEach(category => {
+                const matchingIngredients = ingredientsByCategory[category].filter(ingredient =>
+                    !filter || ingredient.name.toLowerCase().includes(filter)
+                );
 
-        // when a checkbox is checked or unchecked, updates the selectedIngredients array
-        $('.ingredient-item input[type="checkbox"]').change(function() {
-            const id = $(this).closest('.ingredient-item').data('id');
-            if ($(this).is(':checked')) {
-                selectedIngredients.push(id);
-            } else {
-                selectedIngredients = selectedIngredients.filter(i => i !== id);
+                if (matchingIngredients.length === 0) return; // skip categories with no visible items
+
+                if (showCategories) {
+                    // when there are many results keep the collapsible category headers
+                    // open by default while filtering so the user sees the results immediately
+                    const isFiltering = filter.length > 0;
+                    html += `
+                        <div class="ingredient-category">
+                            <div class="ingredient-category-header" data-category="${category}">
+                                <strong>${category}</strong> <span class="toggle-icon">${isFiltering ? '▼' : '▶'}</span>
+                            </div>
+                            <div class="ingredient-category-items${isFiltering ? '' : ' collapsed'}" data-category="${category}">
+                    `;
+                    matchingIngredients.forEach(ingredient => {
+                        const checked = selectedIngredients.includes(parseInt(ingredient.pk_ingredients, 10)) ? 'checked' : '';
+                        html += `
+                            <div class="ingredient-item" data-id="${ingredient.pk_ingredients}" data-name="${ingredient.name}" data-category="${category}">
+                                <input type="checkbox" id="ing-${ingredient.pk_ingredients}" ${checked}>
+                                <label for="ing-${ingredient.pk_ingredients}">${ingredient.name}</label>
+                            </div>
+                        `;
+                    });
+                    html += `</div></div>`;
+                } else {
+                    // when 10 or fewer items match, show them flat without category wrappers
+                    matchingIngredients.forEach(ingredient => {
+                        const checked = selectedIngredients.includes(parseInt(ingredient.pk_ingredients, 10)) ? 'checked' : '';
+                        html += `
+                            <div class="ingredient-item" data-id="${ingredient.pk_ingredients}" data-name="${ingredient.name}" data-category="${category}">
+                                <input type="checkbox" id="ing-${ingredient.pk_ingredients}" ${checked}>
+                                <label for="ing-${ingredient.pk_ingredients}">${ingredient.name}</label>
+                            </div>
+                        `;
+                    });
+                }
+            });
+
+            if (html === '') {
+                html = '<p style="color:#888; font-size:13px; padding:4px;">No ingredients found</p>';
             }
-            updateSelectedCount();
+
+            return html;
+        }
+
+        // renders the list and re-wires all event listeners
+        renderIngredients = function(filter) {
+            $('#ingredients-list').html(buildIngredientHTML(filter));
+
+            // clicking a category header toggles its ingredient list open or closed
+            $('.ingredient-category-header').click(function() {
+                const category = $(this).data('category');
+                const items = $(`.ingredient-category-items[data-category="${category}"]`);
+                items.toggleClass('collapsed');
+                $(this).find('.toggle-icon').text(items.hasClass('collapsed') ? '▶' : '▼');
+            });
+
+            // when a checkbox is checked or unchecked, updates the selectedIngredients array
+            $('.ingredient-item input[type="checkbox"]').change(function() {
+                const id = parseInt($(this).closest('.ingredient-item').data('id'), 10);
+                if ($(this).is(':checked')) {
+                    if (!selectedIngredients.includes(id)) selectedIngredients.push(id);
+                } else {
+                    selectedIngredients = selectedIngredients.filter(i => i !== id);
+                }
+                updateSelectedCount();
+            });
+        }
+
+        // initial render with no filter
+        renderIngredients('');
+
+        // wire the search bar — re-render dynamically on every keystroke
+        // unbind first to avoid stacking handlers if loadIngredients is ever called again
+        $('#ingredient-search').off('input').on('input', function() {
+            renderIngredients($(this).val());
         });
 
     }, function() {

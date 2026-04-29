@@ -89,6 +89,22 @@ select {
 }
 
 /* ── Ingredient filter panel ──────────────────────────────── */
+#ingredient-search {
+    width: 100%;
+    padding: 7px 10px;
+    border: 2px solid #F5E7C6;
+    border-radius: 4px;
+    font-size: 13px;
+    margin-bottom: 6px;
+    color: #222222;
+    box-sizing: border-box;
+}
+
+#ingredient-search:focus {
+    outline: none;
+    border-color: #FA8112;
+}
+
 #ingredients-list {
     max-height: 300px;
     overflow-y: auto; /* adds a scrollbar when the list is too long */
