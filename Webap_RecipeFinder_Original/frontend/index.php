@@ -38,19 +38,18 @@ $isLoggedIn = isset($_COOKIE['user']) && is_numeric($_COOKIE['user']);
         <button id="favorites-btn">❤️ Favorites</button> <!-- shows the user's saved favorite recipes -->
 
 
-        <?php if ($isLoggedIn): ?>
-            <!-- "Create Your Own Recipe" button — only visible when the user is logged in -->
-            <button id="create-recipe-btn" title="Create and submit your own recipe">🍳 Create Your Own Recipe</button>
-        <?php endif; ?>
+
 
         <?php if ($isLoggedIn): ?>
+        <!-- "Create Your Own Recipe" button — only visible when the user is logged in -->
+        <button id="create-recipe-btn" title="Create and submit your own recipe">🍳 Create Your Own Recipe</button>
         <a href="<?= $_SERVER['PHP_SELF'] ?>?logout=1"><button>Logout</button></a>
         <?php else: ?>
         <a href="<?= $_SERVER['PHP_SELF'] ?>?page=login"><button>Login</button></a>
         <a href="<?= $_SERVER['PHP_SELF'] ?>?page=register"><button>Register</button></a>
-        <?php endif; ?>
+        
         <a href="<?= dirname($_SERVER['PHP_SELF']) ?>/../backend/admin.php"><button>Admin</button></a>
-
+            <?php endif; ?>
     </div>
 
     <!-- main two-column layout: left sidebar (filters) + right content area -->

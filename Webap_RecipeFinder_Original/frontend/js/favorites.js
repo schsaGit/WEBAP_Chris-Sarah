@@ -1,7 +1,6 @@
 // favorites.js - handles adding/removing favorites and showing the favorites list
 // favorites are stored as prefixed string IDs ("local-7", "spoon-640921") so we can mix sources
 
-// adds or removes a recipe from favorites and saves the updated list to localStorage
 function toggleFavorite(recipeId) {
     const id = String(recipeId);
     if (favorites.includes(id)) {

@@ -1,4 +1,4 @@
-// detail.js - shows the full recipe detail view, similar recipes, and handles going back
+// detail.js - Recipe detail view, similar recipes, and back navigation
 
 // switches from the list view to the detail view and loads a single recipe's full data
 // recipeId is now a prefixed string: "local-7" or "spoon-640921"
@@ -18,7 +18,6 @@ function showRecipeDetail(recipeId) {
             ? `<span class="recipe-source-badge spoon detail">SPOONACULAR</span>`
             : '';
 
-        // starts building the detail HTML with the favorite heart button in the top-right corner
         let html = `
             <button class="favorite-heart-detail" data-id="${id}">${heartIcon}</button>
             ${sourceBadge}
@@ -81,7 +80,6 @@ function showRecipeDetail(recipeId) {
 
         $('#recipe-detail').html(html);
 
-        // wires the heart button to toggle this recipe's favorite status
         $('.favorite-heart-detail').click(function() {
             const favId = $(this).data('id');
             toggleFavorite(favId);
@@ -127,7 +125,6 @@ function loadSimilarRecipes(recipeId) {
     });
 }
 
-// switches back from the detail view to the recipe list
 function showRecipeList() {
     $('#detail-section').hide();
     $('#recipes-section').show();

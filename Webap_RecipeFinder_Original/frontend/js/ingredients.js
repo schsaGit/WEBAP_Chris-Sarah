@@ -1,4 +1,4 @@
-// ingredients.js - loads the ingredient filter panel, handles checkbox selection, and filters recipes
+// ingredients.js - Ingredient panel, checkbox handling, and filter by ingredients
 
 // exposed so events.js can call renderIngredients('') on clear
 let renderIngredients = function() {};
@@ -48,13 +48,12 @@ function refreshVisibleIngredientExamples() {
 // fetches all ingredients from the API and builds the collapsible category panels
 function loadIngredients() {
     apiFetchIngredients(function(data) {
-        const ingredientsByCategory = {}; // will hold ingredients grouped by their category name
+        const ingredientsByCategory = {};
 
-        // groups each ingredient into its category bucket
         data.forEach(ingredient => {
-            const category = ingredient.category || 'Other'; // uses 'Other' if the ingredient has no category
+            const category = ingredient.category || 'Other';
             if (!ingredientsByCategory[category]) {
-                ingredientsByCategory[category] = []; // creates the category bucket if it doesn't exist yet
+                ingredientsByCategory[category] = [];
             }
             ingredientsByCategory[category].push(ingredient);
         });
@@ -274,7 +273,6 @@ function filterByIngredients() {
     });
 }
 
-// updates the filter button label to show how many ingredients are currently selected
 function updateSelectedCount() {
     const count = selectedIngredients.length;
     $('#filter-btn').text(count > 0 ? `Filter recipes (${count} ingredients)` : 'Filter recipes');

@@ -1,4 +1,4 @@
-// state.js - shared variables used by all other JavaScript files in the app
+// state.js - Shared application state and constants
 
 const API_BASE = '../backend/api/'; // the base URL for all backend API requests
 

@@ -1,33 +1,31 @@
-// recipes.js - loads and displays the recipe list, and fills the category/difficulty dropdowns
+// recipes.js - Load and display the recipe list
 
-// fetches difficulty levels from the API and fills the difficulty dropdown
 function loadDifficulties() {
     apiFetchDifficulties(function(data) {
-        difficulties = data; // saves the difficulty data to the shared state variable so other files can use it
+        difficulties = data;
         let html = '<option value="">All Difficulties</option>';
         for (const [id, name] of Object.entries(data)) {
-            html += `<option value="${id}">${name}</option>`; // adds one dropdown option per difficulty level
+            html += `<option value="${id}">${name}</option>`;
         }
-        $('#difficulty-filter').html(html); // inserts all options into the dropdown element
+        $('#difficulty-filter').html(html);
     });
 }
 
-// fetches categories from the API and fills the category dropdown
 function loadCategories() {
     apiFetchCategories(function(data) {
         let html = '<option value="">All Categories</option>';
         for (const [id, name] of Object.entries(data)) {
-            html += `<option value="${id}">${name}</option>`; // adds one dropdown option per category
+            html += `<option value="${id}">${name}</option>`;
         }
-        $('#category-filter').html(html); // inserts all options into the dropdown element
+        $('#category-filter').html(html);
     });
 }
 
 // fetches recipes from the API (with optional filters) and displays them as cards
 // loads from BOTH local and spoonacular when no filter is active; falls back to local-only when category/difficulty is set
 function loadRecipes(params = {}) {
-    $('#recipes-container').html('Loading recipes...'); // shows a loading message while waiting for the API
-    $('#no-results').hide(); // hides the "No recipes found" message while loading
+    $('#recipes-container').html('Loading recipes...');
+    $('#no-results').hide();
 
     // only fall back to local-only when fetching by specific IDs (favorites);
     // category/difficulty are translated to spoonacular params on the backend
@@ -56,7 +54,6 @@ function loadRecipes(params = {}) {
     }
 }
 
-// builds the HTML for a list of recipe cards and inserts them into the page
 function displayRecipes(recipes) {
     let html = '';
     recipes.forEach(recipe => {
@@ -93,9 +90,8 @@ function displayRecipes(recipes) {
             </div>
         `;
     });
-    $('#recipes-container').html(html); // inserts all the card HTML into the page at once
+    $('#recipes-container').html(html);
 
-    // attaches a click handler to every card so clicking opens that recipe's detail view
     $('.recipe-card').click(function() {
         showRecipeDetail($(this).data('id')); // data-id is now the prefixed string id
     });

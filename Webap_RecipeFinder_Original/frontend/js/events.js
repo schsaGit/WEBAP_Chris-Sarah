@@ -1,4 +1,4 @@
-// events.js - wires all buttons and inputs to their handler functions
+// events.js - All event listener setup
 
 function setupEventListeners() {
     // search button: searches BOTH local and spoonacular and merges the results
@@ -20,12 +20,10 @@ function setupEventListeners() {
         }
     });
 
-    // pressing Enter in the search box triggers the search button click
     $('#search-input').keypress(function(e) {
-        if (e.which === 13) $('#search-btn').click(); // 13 is the key code for the Enter key
+        if (e.which === 13) $('#search-btn').click();
     });
 
-    // favorites button: shows only the recipes the user has saved as favorites
     $('#favorites-btn').click(showFavorites);
 
     // "Create Your Own Recipe" button — only rendered by index.php when the user is logged in,
