@@ -12,6 +12,11 @@ function apiFetchIngredients(callback, failCallback) {
     $.getJSON(API_BASE + 'ingredients.php', callback).fail(failCallback);
 }
 
+// fetches up to 3 local recipes that use the given ingredient ID
+function apiFetchIngredientRecipeExamples(ingredientId, callback, failCallback) {
+    $.getJSON(API_BASE + 'ingredient-recipes.php?id=' + ingredientId, callback).fail(failCallback);
+}
+
 // fetches all categories and calls the callback with the result
 function apiFetchCategories(callback) {
     $.getJSON(API_BASE + 'categories.php', callback);
