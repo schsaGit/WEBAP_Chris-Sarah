@@ -3,7 +3,7 @@ if (isset($_COOKIE["user"])) {
     header('Location: ../../frontend/index.html');
     exit;
 } else {
-    require_once '../db.php';
+    require_once '../backend/db.php';
 
     $username = $_POST['username'] ?? '';
     $error = '';
