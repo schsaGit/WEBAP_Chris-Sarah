@@ -1,9 +1,9 @@
 <?php
 if (isset($_COOKIE["user"])) {
-    header('Location: ../../frontend/index.html');
+    header('Location: index.php');
     exit;
 } else {
-    require_once '../db.php';
+    require_once '../backend/db.php';
 
     $username = $_POST['username'] ?? '';
     $error = '';
@@ -11,15 +11,29 @@ if (isset($_COOKIE["user"])) {
     $hashedPassword = "";
 
     $form = "
-    <form method='post'>
-        <label for='username'>username</label>
-        <input id='username' type='text' required value='$username' name='username'>
-        <br>
-        <label for='password'>password</label>
-        <input id='password' type='password' required name='password'>
-        <br>
-        <input type='submit' name='login' value='log in'>
-    </form>
+    <style>
+        body { background: #FA8112; }
+        .auth-box { max-width: 360px; margin: 60px auto; background: #FAF3E1; border: 2px solid #F5E7C6; border-radius: 8px; padding: 40px; }
+        .auth-box h2 { color: #FA8112; margin-bottom: 24px; }
+        .auth-box label { display: block; margin-bottom: 4px; font-size: 14px; }
+        .auth-box input[type='text'], .auth-box input[type='password'] { width: 100%; padding: 10px; border: 2px solid #F5E7C6; border-radius: 4px; font-size: 14px; margin-bottom: 16px; box-sizing: border-box; }
+        .auth-box input[type='text']:focus, .auth-box input[type='password']:focus { outline: none; border-color: #FA8112; }
+        .auth-box input[type='submit'] { width: 100%; background-color: #F5E7C6; color: #222; border: 1px solid #222; padding: 10px; border-radius: 4px; font-size: 14px; cursor: pointer; }
+        .auth-box input[type='submit']:hover { background-color: #FA8112; color: #FAF3E1; border-color: #FA8112; }
+        .auth-link { margin-top: 14px; font-size: 13px; }
+        .auth-link a { color: #FA8112; }
+    </style>
+    <div class='auth-box'>
+        <h2>Login</h2>
+        <form method='post'>
+            <label for='username'>Username</label>
+            <input id='username' type='text' required value='$username' name='username'>
+            <label for='password'>Password</label>
+            <input id='password' type='password' required name='password'>
+            <input type='submit' name='login' value='Log in'>
+        </form>
+        <p class='auth-link'>No account? <a href='index.php?page=register'>Register</a></p>
+    </div>
     ";
 
     # check if form is submitted
@@ -51,7 +65,7 @@ if (isset($_COOKIE["user"])) {
                         setcookie('user', (string) $pk_userId, strtotime('+90 days'), '/');
                         mysqli_stmt_close($stmt);
                         mysqli_close($conn);
-                        header('Location: ../../frontend/index.html');
+                        header('Location: index.php');
                         exit;
                     } else {
                         $error = 'Invalid username or password.';
@@ -80,7 +94,7 @@ if (isset($_COOKIE["user"])) {
 
     # check if error is present and display it
     if ($error !== '') {
-        echo "<p>$error</p>";
+        echo "<p style='color:#c0392b;margin-top:12px;font-size:14px;max-width:360px;margin-left:auto;margin-right:auto;'>$error</p>";
     }
 
     if ($success !== '') {

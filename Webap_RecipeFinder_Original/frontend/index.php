@@ -1,6 +1,17 @@
 <?php
+if (isset($_GET['logout'])) {
+    setcookie('user', '', time() - 3600, '/');
+    header('Location: ' . $_SERVER['PHP_SELF']);
+    exit;
+}
+
 if (isset($_GET['page']) && $_GET['page'] === 'login') {
     include '../backend/api/login.php';
+    exit;
+}
+
+if (isset($_GET['page']) && $_GET['page'] === 'register') {
+    include '../backend/api/register.php';
     exit;
 }
 
@@ -32,9 +43,13 @@ $isLoggedIn = isset($_COOKIE['user']) && is_numeric($_COOKIE['user']);
             <button id="create-recipe-btn" title="Create and submit your own recipe">🍳 Create Your Own Recipe</button>
         <?php endif; ?>
 
-        <a href="?page=login"><button>Login</button></a>
-        <a href="../backend/api/login.php"><button>Login</button></a>
-        <a href="../backend/admin.php"><button>Admin</button></a>
+        <?php if ($isLoggedIn): ?>
+        <a href="<?= $_SERVER['PHP_SELF'] ?>?logout=1"><button>Logout</button></a>
+        <?php else: ?>
+        <a href="<?= $_SERVER['PHP_SELF'] ?>?page=login"><button>Login</button></a>
+        <a href="<?= $_SERVER['PHP_SELF'] ?>?page=register"><button>Register</button></a>
+        <?php endif; ?>
+        <a href="<?= dirname($_SERVER['PHP_SELF']) ?>/../backend/admin.php"><button>Admin</button></a>
 
     </div>
 
