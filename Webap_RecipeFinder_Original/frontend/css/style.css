@@ -84,7 +84,23 @@ select {
     margin-bottom: 10px;
 }
 
-/* Ingredients list */
+/* ── Ingredient filter panel ──────────────────────────────── */
+#ingredient-search {
+    width: 100%;
+    padding: 7px 10px;
+    border: 2px solid #F5E7C6;
+    border-radius: 4px;
+    font-size: 13px;
+    margin-bottom: 6px;
+    color: #222222;
+    box-sizing: border-box;
+}
+
+#ingredient-search:focus {
+    outline: none;
+    border-color: #FA8112;
+}
+
 #ingredients-list {
     max-height: 300px;
     overflow-y: auto;
@@ -146,7 +162,30 @@ select {
     padding: 15px;
     margin-bottom: 15px;
     border-radius: 8px;
-    cursor: pointer;
+    cursor: pointer; /* shows a pointer so users know the card is clickable */
+    position: relative; /* needed so the source badge can be positioned in the corner */
+}
+
+/* source badge in the top-right corner — distinguishes spoonacular recipes from local ones */
+.recipe-source-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    background-color: #FA8112;
+    color: #fff;
+    z-index: 1;
+}
+
+/* larger badge variant for the detail view header */
+.recipe-source-badge.detail {
+    top: 18px;
+    right: 50px;
+    font-size: 12px;
 }
 
 .recipe-card:hover {

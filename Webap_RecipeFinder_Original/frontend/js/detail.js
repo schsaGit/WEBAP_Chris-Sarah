@@ -1,24 +1,33 @@
 // detail.js - Recipe detail view, similar recipes, and back navigation
 
+// switches from the list view to the detail view and loads a single recipe's full data
+// recipeId is now a prefixed string: "local-7" or "spoon-640921"
 function showRecipeDetail(recipeId) {
-    $('#recipes-section').hide();
-    $('#detail-section').show();
+    $('#recipes-section').hide(); // hides the recipe list
+    $('#detail-section').show();  // shows the detail section
     $('#recipe-detail').html('Loading details...');
     currentView = 'detail';
 
-    apiFetchRecipeDetail(recipeId, function(recipe) {
-        const isFavorite = favorites.includes(recipe.pk_recipes);
+    apiFetchRecipeDetailById(recipeId, function(recipe) {
+        const id = recipe.id || ('local-' + recipe.pk_recipes); // safety fallback
+        const isSpoon = recipe.source === 'spoonacular';
+        const isFavorite = favorites.includes(id);
         const heartIcon = isFavorite ? '❤️' : '🤍';
 
+        const sourceBadge = isSpoon
+            ? `<span class="recipe-source-badge spoon detail">SPOONACULAR</span>`
+            : '';
+
         let html = `
-            <button class="favorite-heart-detail" data-id="${recipe.pk_recipes}">${heartIcon}</button>
+            <button class="favorite-heart-detail" data-id="${id}">${heartIcon}</button>
+            ${sourceBadge}
             <div class="recipe-detail-header">
         `;
 
         if (recipe.imageUrl) {
             html += `
                 <div class="recipe-detail-image">
-                    <img src="${recipe.imageUrl}" alt="${recipe.name}">
+                    <img src="${recipe.imageUrl}" alt="${recipe.name}" onerror="this.parentElement.style.display='none'">
                 </div>
             `;
         }
@@ -29,7 +38,7 @@ function showRecipeDetail(recipeId) {
                 <p><strong>Description:</strong> ${recipe.description || '-'}</p>
                 <p><strong>Category:</strong> ${recipe.categoryIcon || ''} ${recipe.categoryName || 'Unknown'}</p>
                 <p><strong>Difficulty:</strong> ${recipe.difficultyStars || ''} ${recipe.difficultyName || 'Unknown'}</p>
-                <p><strong>Preparation time:</strong> ${recipe.preparationTime} minutes</p>
+                <p><strong>Preparation time:</strong> ${recipe.preparationTime}</p>
             </div>
             </div>
 
@@ -37,7 +46,7 @@ function showRecipeDetail(recipeId) {
                 <div class="recipe-instructions">
                     <h3>Instructions:</h3>
                     <div style="white-space: pre-line; background:#f5f5f5; padding:10px; border:1px solid #ddd;">
-                        ${recipe.instructions}
+                        ${recipe.instructions || '-'}
                     </div>
                 </div>
         `;
@@ -48,24 +57,40 @@ function showRecipeDetail(recipeId) {
                     <h3>Ingredients:</h3>
                     <ul>`;
             recipe.ingredients.forEach(ing => {
-                html += `<li>${ing.amount} ${ing.unit} ${ing.name}</li>`;
+                const amount = ing.amount || '';
+                const unit = ing.unit || '';
+                html += `<li>${amount} ${unit} ${ing.name}</li>`;
             });
             html += `</ul>
                 </div>`;
         }
 
         html += `</div>`;
-        html += `<button onclick="window.open('../backend/api/recipes.php?id=${recipeId}', '_blank')" style="margin-top: 20px;">Open API Endpoint</button>`;
+
+        // debug button: opens the raw JSON for either backend
+        const apiUrl = isSpoon
+            ? `../backend/api/spoonacular/recipes.php?id=${id}`
+            : `../backend/api/recipes.php?id=${id.replace('local-', '')}`;
+        html += `<button onclick="window.open('${apiUrl}', '_blank')" style="margin-top: 20px;">Open API Endpoint</button>`;
+
+        // for spoonacular recipes, add the required attribution link to the original source page
+        if (isSpoon && recipe.sourceUrl) {
+            html += ` <button onclick="window.open('${recipe.sourceUrl}', '_blank')" style="margin-top: 20px;">View on spoonacular.com ↗</button>`;
+        }
 
         $('#recipe-detail').html(html);
 
         $('.favorite-heart-detail').click(function() {
-            const id = $(this).data('id');
-            toggleFavorite(id);
-            $(this).text(favorites.includes(id) ? '❤️' : '🤍');
+            const favId = $(this).data('id');
+            toggleFavorite(favId);
+            $(this).text(favorites.includes(favId) ? '❤️' : '🤍');
         });
 
-        loadSimilarRecipes(recipeId);
+        // similar recipes only work for local recipes (similar.php uses the local DB)
+        if (!isSpoon) {
+            const numericId = String(id).replace('local-', '');
+            loadSimilarRecipes(numericId);
+        }
 
     }, function(xhr, status, error) {
         console.error('Error loading recipe:', status, error);
@@ -73,13 +98,16 @@ function showRecipeDetail(recipeId) {
     });
 }
 
+// fetches and displays recipes that share at least 3 ingredients with the current recipe
+// only used for local recipes — similar.php queries the local database
 function loadSimilarRecipes(recipeId) {
     apiFetchSimilarRecipes(recipeId, function(data) {
         if (data.similar_recipes && data.similar_recipes.length > 0) {
             let html = '<h3>Similar Recipes:</h3><div id="similar-recipes-container">';
             data.similar_recipes.forEach(recipe => {
+                const id = 'local-' + recipe.pk_recipes; // similar recipes are always local
                 html += `
-                    <div class="similar-recipe-card" data-id="${recipe.pk_recipes}">
+                    <div class="similar-recipe-card" data-id="${id}">
                         <h4>${recipe.name}</h4>
                         <p style="font-size: 12px; color: #666; margin-bottom: 5px;">${recipe.description || ''}</p>
                         <small>⏱️ ${recipe.preparationTime} min</small><br>

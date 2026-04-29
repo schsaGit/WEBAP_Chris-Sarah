@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 27, 2026 at 07:31 PM
+-- Generation Time: Apr 29, 2026 at 08:47 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -616,6 +616,33 @@ INSERT INTO `recipes` (`pk_recipes`, `name`, `description`, `imageUrl`, `prepara
 (29, 'Berry Cheesecake', 'Creamy New York-style cheesecake with berry topping and graham cracker crust.', 'https://img.delicious.com.au/WD-sxPh2/del/2016/05/jamie-olivers-baked-berry-cheesecake-30767-2.jpg', 180, 4, 3, '1. Make crust: mix 200g crushed graham crackers with 100g melted butter and 50g sugar\n2. Press into springform pan, bake at 180°C for 10 minutes\n3. Beat 900g cream cheese until smooth\n4. Gradually add 250g sugar\n5. Add 3 eggs one at a time\n6. Mix in 240ml sour cream, 1 tablespoon vanilla, lemon zest\n7. Pour over crust\n8. Bake at 160°C (325°F) for 60-70 minutes\n9. Turn off oven, let cool in oven for 1 hour\n10. Chill overnight\n11. Top with fresh berries before serving', '2026-01-27 15:13:20'),
 (30, 'Chocolate Chip Cookies', 'Classic chewy chocolate chip cookies with crisp edges and soft centers.', 'https://www.allrecipes.com/thmb/JCMYBY68TG5gPrZLIx8x_AgcVRg=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/9827-chocolate-chocolate-chip-cookies-i--DDMFS-092-4x3-c8227481fd804270a50256498cf8f05f.jpg', 30, 4, 1, '1. Preheat oven to 190°C (375°F)\n2. Line baking sheets with parchment\n3. Cream 225g butter with 150g brown sugar and 100g white sugar\n4. Add 2 eggs and 2 teaspoons vanilla\n5. Sift 325g flour with 1 teaspoon baking soda and 1/2 teaspoon salt\n6. Gradually add dry ingredients to wet\n7. Stir in 350g chocolate chips\n8. Drop tablespoonfuls onto baking sheets\n9. Bake for 9-11 minutes until golden\n10. Cool on baking sheet for 5 minutes\n11. Transfer to wire rack to cool completely', '2026-01-27 15:13:20');
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+CREATE TABLE `users` (
+  `pk_userId` int(11) NOT NULL,
+  `username` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `created` timestamp NOT NULL DEFAULT current_timestamp(),
+  `name` varchar(255) NOT NULL,
+  `pfp` varchar(255) NOT NULL DEFAULT 'https://shorturl.at/jkuPe',
+  `role` enum('user','administrator') NOT NULL DEFAULT 'user'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`pk_userId`, `username`, `password`, `created`, `name`, `pfp`, `role`) VALUES
+(1, 'masmu123', 'pass123', '2026-04-15 10:21:52', 'Max Mustermann', 'https://shorturl.at/jkuPe', 'administrator'),
+(2, 'masmu', '$2y$10$QdszpePskXfGrQp9enWm.OifdUqVZCvKA22xeR5LcQBVJb6QZjhTu', '2026-04-15 10:45:37', 'max', 'https://shorturl.at/jkuPe', 'user'),
+(3, 'masu', '$2y$10$3y0cPX1H5GIB9yL2q6T9y.ApHhQD/pNOgo8rG1aZjirwxea.WyRgy', '2026-04-15 10:57:50', 'Max', 'https://shorturl.at/jkuPe', 'user'),
+(4, 'barch473', '$2y$10$YDjHcM0Mo4AvO9yYihhAlejfiL9mJhoaiaCaJNnKvLsq7xWoaCyU6', '2026-04-21 08:25:40', 'barch473', 'https://shorturl.at/jkuPe', 'administrator'),
+(5, 'admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi', '2026-04-29 00:00:00', 'Administrator', 'https://shorturl.at/jkuPe', 'administrator');
+
 --
 -- Indexes for dumped tables
 --
@@ -642,6 +669,12 @@ ALTER TABLE `recipes`
   ADD UNIQUE KEY `name` (`name`);
 
 --
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`pk_userId`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -656,6 +689,12 @@ ALTER TABLE `ingredients`
 --
 ALTER TABLE `recipes`
   MODIFY `pk_recipes` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+  MODIFY `pk_userId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Constraints for dumped tables

@@ -1,0 +1,126 @@
+<?php
+if (isset($_GET['logout'])) {
+    setcookie('user', '', time() - 3600, '/');
+    header('Location: ' . $_SERVER['PHP_SELF']);
+    exit;
+}
+
+if (isset($_GET['page']) && $_GET['page'] === 'login') {
+    include '../backend/api/login.php';
+    exit;
+}
+
+if (isset($_GET['page']) && $_GET['page'] === 'register') {
+    include '../backend/api/register.php';
+    exit;
+}
+
+# check login state server-side so PHP can decide whether to render the button
+$isLoggedIn = isset($_COOKIE['user']) && is_numeric($_COOKIE['user']);
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"> <!-- tells the browser to use UTF-8 so special characters display correctly -->
+    <title>Recipe Finder</title>
+    <link rel="stylesheet" href="css/style.css"> <!-- loads the stylesheet for all visual styling -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script> <!-- loads jQuery from a CDN — must be before all other scripts -->
+</head>
+<body>
+<div id="page">
+<div id="app">
+    <h1>Recipe Finder</h1>
+
+    <!-- search bar and top buttons -->
+    <div>
+        <input type="text" id="search-input" placeholder="Search recipes..."> <!-- text field where the user types a search word -->
+        <button id="search-btn">Search</button> <!-- triggers a recipe search using the text field value -->
+        <button id="favorites-btn">❤️ Favorites</button> <!-- shows the user's saved favorite recipes -->
+
+
+
+
+        <?php if ($isLoggedIn): ?>
+        <!-- "Create Your Own Recipe" button — only visible when the user is logged in -->
+        <button id="create-recipe-btn" title="Create and submit your own recipe">🍳 Create Your Own Recipe</button>
+        <a href="<?= $_SERVER['PHP_SELF'] ?>?logout=1"><button>Logout</button></a>
+        <?php else: ?>
+        <a href="<?= $_SERVER['PHP_SELF'] ?>?page=login"><button>Login</button></a>
+        <a href="<?= $_SERVER['PHP_SELF'] ?>?page=register"><button>Register</button></a>
+        
+        <a href="<?= dirname($_SERVER['PHP_SELF']) ?>/../backend/admin.php"><button>Admin</button></a>
+            <?php endif; ?>
+    </div>
+
+    <!-- main two-column layout: left sidebar (filters) + right content area -->
+    <div style="display: flex; margin-top: 20px;">
+
+        <!-- left sidebar: ingredient filter, category/difficulty dropdowns, random button -->
+        <div style="width: 300px; border-right: 1px solid #ccc; padding-right: 20px;">
+            <h3>Filters</h3>
+
+            <h4>Select ingredients:</h4>
+            <!-- scrollable list of all ingredients, populated by ingredients.js -->
+            <div id="ingredients-list" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
+                Loading ingredients...
+            </div>
+
+            <button id="filter-btn">Filter recipes</button> <!-- filters recipes to show only those with ALL selected ingredients -->
+            <button id="clear-btn">Clear selection</button> <!-- unchecks all selected ingredients and reloads all recipes -->
+            <h4>Category:</h4>
+            <!-- dropdown for filtering by category (e.g. Main Course, Soup); options added by recipes.js -->
+            <select id="category-filter">
+                <option value="">All</option>
+            </select>
+
+            <h4>Difficulty:</h4>
+            <!-- dropdown for filtering by difficulty (Easy, Medium, Hard); options added by recipes.js -->
+            <select id="difficulty-filter">
+                <option value="">All</option>
+            </select>
+
+            <div style="margin-top: 20px;">
+                <button id="random-btn">Random recipe</button> <!-- opens a random recipe's detail view -->
+            </div>
+        </div>
+
+        <!-- right content area: shows either the recipe list or a single recipe detail view -->
+        <div style="flex: 1; padding-left: 20px;">
+
+            <!-- recipe list view (visible by default) -->
+            <div id="recipes-section">
+                <h2>Recipes <span id="recipe-count"></span></h2> <!-- recipe-count gets filled with the number of results -->
+                <div id="recipes-container">
+                    Loading recipes... <!-- replaced with recipe cards once data loads -->
+                </div>
+                <div id="no-results" style="display: none;">No recipes found</div> <!-- shown when a search/filter returns nothing -->
+            </div>
+
+            <!-- recipe detail view (hidden until a recipe is clicked or the create-form is opened) -->
+            <div id="detail-section" style="display: none;">
+                <button id="back-btn">← Back</button> <!-- goes back to the recipe list -->
+                <div id="recipe-detail"></div> <!-- filled with the full recipe details by detail.js, or the create-form by recipeForm.js -->
+            </div>
+        </div>
+    </div>
+
+    <!-- API status indicator at the bottom of the page -->
+    <div style="margin-top: 30px; padding-top: 10px; border-top: 1px solid #ccc;">
+        <div id="api-status">API Status: Connecting...</div> <!-- updated by app.js to show if the backend is reachable -->
+    </div>
+</div>
+</div>
+
+<!-- Load order matters: state and api first, then feature modules, then event wiring, then entry point -->
+<!-- state.js and api.js must be first because all other files depend on them -->
+<script src="js/state.js"></script>       <!-- shared variables used across all modules -->
+<script src="js/api.js"></script>         <!-- functions that talk to the backend API -->
+<script src="js/recipes.js"></script>     <!-- loads and displays the recipe list -->
+<script src="js/ingredients.js"></script> <!-- loads the ingredient filter panel -->
+<script src="js/detail.js"></script>      <!-- shows the full recipe detail view -->
+<script src="js/favorites.js"></script>   <!-- manages saving and loading favorite recipes -->
+<script src="js/recipeForm.js"></script>  <!-- create-your-own-recipe form (only used when logged in) -->
+<script src="js/events.js"></script>      <!-- wires all button clicks and input events to their handlers -->
+<script src="js/app.js"></script>         <!-- entry point: starts the app after everything else is loaded -->
+</body>
+</html>
