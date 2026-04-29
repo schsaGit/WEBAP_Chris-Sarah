@@ -1,50 +1,64 @@
-Recipe Finder
-A full-stack web application that lets users browse, search, filter, favorite, and create recipes. Recipes are pulled from a local MySQL database and the external Spoonacular API, then merged into a single unified view.
-Built as a school web-application project by Chris & Sarah.
+# Recipe Finder
 
-Table of Contents
+A full-stack web application that lets users browse, search, filter, favorite, and create recipes. Recipes are pulled from a local MySQL database **and** the external [Spoonacular API](https://spoonacular.com/food-api), then merged into a single unified view.
 
-Features
-Tech Stack
-Project Structure
-Getting Started (XAMPP)
-Database Schema
-Configuration
-API Reference
+Built as a school web-application project by **Chris & Sarah**.
 
-Local Recipe API
-Spoonacular Proxy API
-Authentication Pages
-Admin API
-User-generated content
-Generic CRUD demo (api.php)
+---
 
+## Table of Contents
 
-Authentication & Roles
-Frontend Architecture
-Authors
+1. [Features](#features)
+2. [Tech Stack](#tech-stack)
+3. [Project Structure](#project-structure)
+4. [Getting Started (XAMPP)](#getting-started-xampp)
+5. [Database Schema](#database-schema)
+6. [Configuration](#configuration)
+7. [API Reference](#api-reference)
+   - [Local Recipe API](#local-recipe-api)
+   - [Spoonacular Proxy API](#spoonacular-proxy-api)
+   - [Authentication Pages](#authentication-pages)
+   - [Admin API](#admin-api)
+   - [User-generated content](#user-generated-content)
+   - [Generic CRUD demo (`api.php`)](#generic-crud-demo-apiphp)
+8. [Authentication & Roles](#authentication--roles)
+9. [Frontend Architecture](#frontend-architecture)
+10. [Authors](#authors)
 
+---
 
-Features
+## Features
 
-Browse all recipes with category, difficulty, and ingredient filters
-Full-text search across recipe name and description (with relevance ranking)
-Find recipes that contain all selected ingredients
-"Similar recipes" suggestions based on shared ingredients
-Random-recipe button
-Favorites (stored client-side)
-User registration / login (cookie session, hashed passwords)
-Account settings (change password, sign out)
-"Create your own recipe" form for logged-in users
-Add new ingredients on the fly
-Administrator dashboard for managing users and recipes
-External Spoonacular results merged seamlessly with local recipes
+- Browse all recipes with category, difficulty, and ingredient filters
+- Full-text search across recipe name and description (with relevance ranking)
+- Find recipes that contain **all** selected ingredients
+- "Similar recipes" suggestions based on shared ingredients
+- Random-recipe button
+- Favorites (stored client-side)
+- User registration / login (cookie session, hashed passwords)
+- Account settings (change password, sign out)
+- "Create your own recipe" form for logged-in users
+- Add new ingredients on the fly
+- Administrator dashboard for managing users and recipes
+- External Spoonacular results merged seamlessly with local recipes
 
+---
 
-Tech Stack
-LayerTechnologyFrontendHTML5, CSS3, vanilla JavaScript, jQuery 3.7BackendPHP 8 (no framework)DatabaseMySQL / MariaDB (mysqli)External APISpoonacular Food APIServerApache (XAMPP)
+## Tech Stack
 
-Project Structure
+| Layer        | Technology                                |
+| ------------ | ----------------------------------------- |
+| Frontend     | HTML5, CSS3, vanilla JavaScript, jQuery 3.7 |
+| Backend      | PHP 8 (no framework)                      |
+| Database     | MySQL / MariaDB (`mysqli`)                |
+| External API | Spoonacular Food API                      |
+| Server       | Apache (XAMPP)                            |
+
+---
+
+## Project Structure
+
+```
 WEBAP_Chris-Sarah/
 └── Webap_RecipeFinder_Original/
     ├── frontend/
@@ -95,37 +109,62 @@ WEBAP_Chris-Sarah/
                 ├── search.php
                 ├── filter.php
                 └── random.php
+```
 
-Getting Started (XAMPP)
-1. Prerequisites
+---
 
-XAMPP (Apache + MySQL + PHP 8+)
-A free Spoonacular API key from https://spoonacular.com/food-api
+## Getting Started (XAMPP)
 
-2. Clone the repository
-bashgit clone https://github.com/<your-org>/WEBAP_Chris-Sarah.git
+### 1. Prerequisites
+
+- [XAMPP](https://www.apachefriends.org/) (Apache + MySQL + PHP 8+)
+- A free Spoonacular API key from <https://spoonacular.com/food-api>
+
+### 2. Clone the repository
+
+```bash
+git clone https://github.com/<your-org>/WEBAP_Chris-Sarah.git
 cd WEBAP_Chris-Sarah
-Copy or symlink the Webap_RecipeFinder_Original folder into the XAMPP htdocs directory (e.g. C:\xampp\htdocs\Webap_RecipeFinder_Original).
-3. Start Apache and MySQL
+```
+
+Copy or symlink the `Webap_RecipeFinder_Original` folder into the XAMPP `htdocs` directory (e.g. `C:\xampp\htdocs\Webap_RecipeFinder_Original`).
+
+### 3. Start Apache and MySQL
+
 Open the XAMPP control panel and start both services.
-4. Create the database
-Open http://localhost/phpmyadmin, create a database named recipe, then run the SQL from the Database Schema section below.
-5. Configure the Spoonacular key
-Edit Webap_RecipeFinder_Original/backend/config/api_keys.php and replace the placeholder:
-php<?php
+
+### 4. Create the database
+
+Open <http://localhost/phpmyadmin>, create a database named `recipe`, then run the SQL from the [Database Schema](#database-schema) section below.
+
+### 5. Configure the Spoonacular key
+
+Edit `Webap_RecipeFinder_Original/backend/config/api_keys.php` and replace the placeholder:
+
+```php
+<?php
 define('SPOONACULAR_KEY', 'your-real-spoonacular-key-here');
 ?>
+```
 
-The default DB credentials in backend/db.php are root / no password / recipe — fine for a local XAMPP install.
+> The default DB credentials in `backend/db.php` are `root` / no password / `recipe` — fine for a local XAMPP install.
 
-6. Open the app
+### 6. Open the app
+
 Visit:
-http://localhost/Webap_RecipeFinder_Original/frontend/index.php
-You should see the recipe list. The footer reads API Status: Connected ✓ when everything is wired up.
 
-Database Schema
-The app uses a MySQL database called recipe with four tables. The schema below is inferred from the SQL queries in the codebase.
-sqlCREATE DATABASE IF NOT EXISTS recipe
+<http://localhost/Webap_RecipeFinder_Original/frontend/index.php>
+
+You should see the recipe list. The footer reads **API Status: Connected ✓** when everything is wired up.
+
+---
+
+## Database Schema
+
+The app uses a MySQL database called `recipe` with four tables. The schema below is inferred from the SQL queries in the codebase.
+
+```sql
+CREATE DATABASE IF NOT EXISTS recipe
   DEFAULT CHARACTER SET utf8mb4
   DEFAULT COLLATE utf8mb4_unicode_ci;
 
@@ -180,26 +219,63 @@ CREATE TABLE includes (
     FOREIGN KEY (pkfk_recipe)     REFERENCES recipes(pk_recipes)         ON DELETE CASCADE,
     FOREIGN KEY (pkfk_ingredient) REFERENCES ingredients(pk_ingredients) ON DELETE CASCADE
 );
-Categories and difficulties are not stored in DB tables — they live in JSON files at backend/data/categories.json and backend/data/difficulties.json.
+```
 
-Configuration
-FilePurposebackend/db.phpMySQL host / user / password / db namebackend/config/api_keys.phpSPOONACULAR_KEY constantbackend/data/categories.jsonCategory id → display name + emoji iconbackend/data/difficulties.jsonDifficulty id → name, star rating, badge color
+Categories and difficulties are **not** stored in DB tables — they live in JSON files at `backend/data/categories.json` and `backend/data/difficulties.json`.
+
+---
+
+## Configuration
+
+| File                                  | Purpose                                              |
+| ------------------------------------- | ---------------------------------------------------- |
+| `backend/db.php`                      | MySQL host / user / password / db name               |
+| `backend/config/api_keys.php`         | `SPOONACULAR_KEY` constant                           |
+| `backend/data/categories.json`        | Category id → display name + emoji icon              |
+| `backend/data/difficulties.json`      | Difficulty id → name, star rating, badge color       |
+
 Cookies set by the app:
-CookieSet byLifetimeContentsuserlogin.php / register.php90 daysThe numeric pk_userId
 
-API Reference
+| Cookie | Set by                          | Lifetime  | Contents                |
+| ------ | ------------------------------- | --------- | ----------------------- |
+| `user` | `login.php` / `register.php`    | 90 days   | The numeric `pk_userId` |
+
+---
+
+## API Reference
+
 All endpoints live under:
+
+```
 http://localhost/Webap_RecipeFinder_Original/backend/api/
-Every JSON endpoint returns Content-Type: application/json and standard HTTP status codes (200, 201, 400, 401, 403, 404, 405, 409, 422, 500, 502).
-Local Recipe API
-GET /recipes.php
+```
+
+Every JSON endpoint returns `Content-Type: application/json` and standard HTTP status codes (`200`, `201`, `400`, `401`, `403`, `404`, `405`, `409`, `422`, `500`, `502`).
+
+### Local Recipe API
+
+#### `GET /recipes.php`
+
 List recipes, optionally filtered.
-Query params
-ParamTypeDescriptioncategoryintOptional. Filter by category id (1–4).difficultyintOptional. Filter by difficulty id (1–3).idsstringOptional. Comma-separated list of recipe ids (used for favorites).
-Example
+
+**Query params**
+
+| Param        | Type   | Description                                                  |
+| ------------ | ------ | ------------------------------------------------------------ |
+| `category`   | int    | Optional. Filter by category id (1–4).                       |
+| `difficulty` | int    | Optional. Filter by difficulty id (1–3).                     |
+| `ids`        | string | Optional. Comma-separated list of recipe ids (used for favorites). |
+
+**Example**
+
+```
 GET /backend/api/recipes.php?category=1&difficulty=2
-Response 200
-json{
+```
+
+**Response 200**
+
+```json
+{
   "count": 2,
   "recipes": [
     {
@@ -219,10 +295,16 @@ json{
     }
   ]
 }
-GET /recipes.php?id={id}
+```
+
+#### `GET /recipes.php?id={id}`
+
 Get the full detail of a single recipe (including its ingredient list).
-Response 200
-json{
+
+**Response 200**
+
+```json
+{
   "pk_recipes": 7,
   "name": "Spaghetti Bolognese",
   "description": "…",
@@ -240,26 +322,50 @@ json{
     { "pk_ingredients": 18, "name": "Ground beef", "category": "Meat",  "amount": "500", "unit": "g" }
   ]
 }
-Errors: 404 { "error": "Recipe not found" }
+```
 
-GET /search.php?q={term}
+**Errors**: `404 { "error": "Recipe not found" }`
+
+---
+
+#### `GET /search.php?q={term}`
+
 Full-text search by recipe name or description (with relevance ranking — name matches are ranked above description matches).
-Example
+
+**Example**
+
+```
 GET /backend/api/search.php?q=pasta
-Response 200
-json{
+```
+
+**Response 200**
+
+```json
+{
   "count": 3,
   "search_term": "pasta",
   "recipes": [ /* same shape as recipes.php list */ ]
 }
-Errors: 400 { "error": "Search term is missing" }
+```
 
-GET /filter.php?ingredients={ids}
-Find recipes that contain all the supplied ingredient IDs.
-Example
+**Errors**: `400 { "error": "Search term is missing" }`
+
+---
+
+#### `GET /filter.php?ingredients={ids}`
+
+Find recipes that contain **all** the supplied ingredient IDs.
+
+**Example**
+
+```
 GET /backend/api/filter.php?ingredients=1,5,12
-Response 200
-json{
+```
+
+**Response 200**
+
+```json
+{
   "count": 1,
   "selected_ingredients_count": 3,
   "recipes": [
@@ -281,12 +387,20 @@ json{
     }
   ]
 }
-Errors: 400 { "error": "No ingredients selected" } / 400 { "error": "Invalid ingredient IDs" }
+```
 
-GET /similar.php?id={id}
+**Errors**: `400 { "error": "No ingredients selected" }` / `400 { "error": "Invalid ingredient IDs" }`
+
+---
+
+#### `GET /similar.php?id={id}`
+
 Returns up to 5 recipes that share at least 3 ingredients with the given recipe, sorted by overlap.
-Response 200
-json{
+
+**Response 200**
+
+```json
+{
   "count": 2,
   "similar_recipes": [
     {
@@ -301,42 +415,85 @@ json{
     }
   ]
 }
+```
 
-GET /random.php
+---
+
+#### `GET /random.php`
+
 Returns the id of one randomly chosen local recipe.
-Response 200
-json{ "pk_recipes": 14 }
-Errors: 404 { "error": "No recipes found" }
 
-GET /categories.php
-json{ "1": "Main Course", "2": "Side Dish", "3": "Soup", "4": "Sweets/Dessert" }
-GET /difficulty.php
-json{ "1": "Easy", "2": "Medium", "3": "Hard" }
-GET /ingredients.php
+**Response 200**
+
+```json
+{ "pk_recipes": 14 }
+```
+
+**Errors**: `404 { "error": "No recipes found" }`
+
+---
+
+#### `GET /categories.php`
+
+```json
+{ "1": "Main Course", "2": "Side Dish", "3": "Soup", "4": "Sweets/Dessert" }
+```
+
+#### `GET /difficulty.php`
+
+```json
+{ "1": "Easy", "2": "Medium", "3": "Hard" }
+```
+
+#### `GET /ingredients.php`
+
 Returns every ingredient sorted by category then name.
-json[
+
+```json
+[
   { "pk_ingredients": 1, "name": "Apple",  "category": "Fruit"     },
   { "pk_ingredients": 2, "name": "Banana", "category": "Fruit"     },
   { "pk_ingredients": 3, "name": "Beef",   "category": "Meat"      }
 ]
-GET /ingredient-recipes.php?id={ingredientId}
+```
+
+#### `GET /ingredient-recipes.php?id={ingredientId}`
+
 Up to 3 example local recipes that use the given ingredient.
-json{
+
+```json
+{
   "recipes": [
     { "pk_recipes": 7,  "name": "Spaghetti Bolognese" },
     { "pk_recipes": 11, "name": "Lasagna" }
   ]
 }
+```
 
-Spoonacular Proxy API
-These endpoints proxy spoonacular.com/food-api and normalize the responses into the same shape as the local API. Recipe ids are prefixed with spoon- (e.g. spoon-640921).
-Base path: /backend/api/spoonacular/
-GET /spoonacular/recipes.php
+---
+
+### Spoonacular Proxy API
+
+These endpoints proxy [spoonacular.com/food-api](https://spoonacular.com/food-api) and normalize the responses into the same shape as the local API. Recipe ids are prefixed with `spoon-` (e.g. `spoon-640921`).
+
+Base path: `/backend/api/spoonacular/`
+
+#### `GET /spoonacular/recipes.php`
+
 List view — returns 12 random recipes when no filter is given, otherwise a filtered set.
-Query params
-ParamTypeDescriptioncategoryintOptional. Maps 1→main course, 2→side dish, 3→soup, 4→dessert.difficultyintOptional. Maps to readyInMinutes ranges (<20, <60, ≥60).numberintOptional (random mode only). 1–20, defaults to 12.
-Response 200
-json{
+
+**Query params**
+
+| Param        | Type | Description                                              |
+| ------------ | ---- | -------------------------------------------------------- |
+| `category`   | int  | Optional. Maps `1→main course`, `2→side dish`, `3→soup`, `4→dessert`. |
+| `difficulty` | int  | Optional. Maps to `readyInMinutes` ranges (`<20`, `<60`, `≥60`). |
+| `number`     | int  | Optional (random mode only). 1–20, defaults to 12.       |
+
+**Response 200**
+
+```json
+{
   "count": 12,
   "recipes": [
     {
@@ -359,58 +516,128 @@ json{
     }
   ]
 }
-GET /spoonacular/recipes.php?id=spoon-{id}
-Full detail of a single Spoonacular recipe (ingredients[] and instructions populated).
-GET /spoonacular/search.php?q={term}
-Same envelope as local search.php.
-GET /spoonacular/filter.php?ingredients={names}
-Comma-separated ingredient names (Spoonacular doesn't use ids). Same envelope as local filter.php, plus the matching_ingredients / missing_list fields.
-GET /spoonacular/random.php
-json{ "id": "spoon-640921", "name": "Cucumber Salad" }
-Errors (any spoonacular endpoint)
+```
 
-400 { "error": "..." } — bad request
-502 { "error": "Spoonacular request failed", "code": <httpCode> } — upstream error
+#### `GET /spoonacular/recipes.php?id=spoon-{id}`
 
+Full detail of a single Spoonacular recipe (`ingredients[]` and `instructions` populated).
 
-Authentication Pages
-These return HTML, not JSON — they're meant to be loaded directly in the browser via index.php?page=….
-POST /login.php (or /index.php?page=login)
-FieldTypeRequiredusernamestringyespasswordstringyesloginhiddenyes
-On success, sets the user cookie (90 days) and redirects to index.php.
-POST /register.php (or /index.php?page=register)
-FieldTypeRequirednamestringyesusernamestringyespasswordstringyesregisterhiddenyes
-Creates a new user with role user, sets the cookie, redirects to index.php.
-GET /index.php?logout=1
-Clears the user cookie and redirects back to the home page.
-GET /settings.php
-Renders the account-settings page. Requires the user cookie.
-POST /settings.php — sign out
-Body: BUTTON_signout=1 → destroys the session and clears the cookie.
-POST /settings.php — change password
-FieldRequiredBUTTON_change_passwordyesDATA_current_passwordyesDATA_new_passwordyesDATA_confirm_passwordyes
-Password rules: 5–20 chars, at least one digit, at least one special character.
+#### `GET /spoonacular/search.php?q={term}`
 
-Admin API
-All admin endpoints require the caller's user cookie to belong to a user with role = 'administrator'. Otherwise:
+Same envelope as local `search.php`.
 
-Not logged in → 401 { "error": "You must be logged in." }
-Logged in but not admin → 403 { "error": "Administrator access required." }
+#### `GET /spoonacular/filter.php?ingredients={names}`
 
-Base path: /backend/api/administrator.php?resource={resource}
-Users — ?resource=users
-MethodBody / QueryDescriptionGET—List all usersPOSTusername, password, name, pfp, roleCreate userPUTid, username, name, pfp, role, password?Update user (password optional)DELETEidDelete user (cannot delete yourself)
-Example: list users
+Comma-separated **ingredient names** (Spoonacular doesn't use ids). Same envelope as local `filter.php`, plus the `matching_ingredients` / `missing_list` fields.
+
+#### `GET /spoonacular/random.php`
+
+```json
+{ "id": "spoon-640921", "name": "Cucumber Salad" }
+```
+
+**Errors (any spoonacular endpoint)**
+
+- `400 { "error": "..." }` — bad request
+- `502 { "error": "Spoonacular request failed", "code": <httpCode> }` — upstream error
+
+---
+
+### Authentication Pages
+
+These return **HTML**, not JSON — they're meant to be loaded directly in the browser via `index.php?page=…`.
+
+#### `POST /login.php` (or `/index.php?page=login`)
+
+| Field      | Type   | Required |
+| ---------- | ------ | -------- |
+| `username` | string | yes      |
+| `password` | string | yes      |
+| `login`    | hidden | yes      |
+
+On success, sets the `user` cookie (90 days) and redirects to `index.php`.
+
+#### `POST /register.php` (or `/index.php?page=register`)
+
+| Field      | Type   | Required |
+| ---------- | ------ | -------- |
+| `name`     | string | yes      |
+| `username` | string | yes      |
+| `password` | string | yes      |
+| `register` | hidden | yes      |
+
+Creates a new user with role `user`, sets the cookie, redirects to `index.php`.
+
+#### `GET /index.php?logout=1`
+
+Clears the `user` cookie and redirects back to the home page.
+
+#### `GET /settings.php`
+
+Renders the account-settings page. Requires the `user` cookie.
+
+#### `POST /settings.php` — sign out
+
+Body: `BUTTON_signout=1` → destroys the session and clears the cookie.
+
+#### `POST /settings.php` — change password
+
+| Field                   | Required |
+| ----------------------- | -------- |
+| `BUTTON_change_password` | yes     |
+| `DATA_current_password`  | yes     |
+| `DATA_new_password`      | yes     |
+| `DATA_confirm_password`  | yes     |
+
+**Password rules**: 5–20 chars, at least one digit, at least one special character.
+
+---
+
+### Admin API
+
+All admin endpoints require the caller's `user` cookie to belong to a user with `role = 'administrator'`. Otherwise:
+
+- Not logged in → `401 { "error": "You must be logged in." }`
+- Logged in but not admin → `403 { "error": "Administrator access required." }`
+
+Base path: `/backend/api/administrator.php?resource={resource}`
+
+#### Users — `?resource=users`
+
+| Method | Body / Query                                     | Description           |
+| ------ | ------------------------------------------------ | --------------------- |
+| GET    | —                                                | List all users        |
+| POST   | `username`, `password`, `name`, `pfp`, `role`    | Create user           |
+| PUT    | `id`, `username`, `name`, `pfp`, `role`, `password?` | Update user (password optional) |
+| DELETE | `id`                                             | Delete user (cannot delete yourself) |
+
+**Example: list users**
+
+```
 GET /backend/api/administrator.php?resource=users
-json{
+```
+
+```json
+{
   "users": [
     { "pk_userId": 1, "username": "sarah", "name": "Sarah", "pfp": "…", "role": "administrator", "created": "2026-01-12 10:14:02" }
   ]
 }
-Recipes — ?resource=recipes
-MethodBody / QueryDescriptionGET—List all recipes (raw, no enrichment)POSTname, description, imageUrl, preparationTime, category, difficulty, instructionsCreate recipePUTid + same fields as POSTUpdate recipeDELETEidDelete recipe
-Example: create recipe
-httpPOST /backend/api/administrator.php?resource=recipes
+```
+
+#### Recipes — `?resource=recipes`
+
+| Method | Body / Query                                                                                  | Description     |
+| ------ | --------------------------------------------------------------------------------------------- | --------------- |
+| GET    | —                                                                                             | List all recipes (raw, no enrichment) |
+| POST   | `name`, `description`, `imageUrl`, `preparationTime`, `category`, `difficulty`, `instructions` | Create recipe   |
+| PUT    | `id` + same fields as POST                                                                    | Update recipe   |
+| DELETE | `id`                                                                                          | Delete recipe   |
+
+**Example: create recipe**
+
+```http
+POST /backend/api/administrator.php?resource=recipes
 Content-Type: application/json
 Cookie: user=1
 
@@ -423,56 +650,105 @@ Cookie: user=1
   "difficulty": 1,
   "instructions": "1. Sauté onion…"
 }
-json{ "message": "Recipe created.", "id": 42 }
+```
 
-User-generated content
-Both endpoints below require the user cookie (any logged-in user).
-POST /create_recipe.php
+```json
+{ "message": "Recipe created.", "id": 42 }
+```
+
+---
+
+### User-generated content
+
+Both endpoints below require the `user` cookie (any logged-in user).
+
+#### `POST /create_recipe.php`
+
 Form-encoded payload from the "Create Your Own Recipe" form.
-FieldTypeRequiredNotesnamestringyesMust be unique.descriptionstringno"Created by <username>." is appended automatically.imageUrlstringnoMust be a valid http(s) URL when provided.preparationTimeintyesPositive minutes.categoryintyes1–4.difficultyintyes1–3.instructionsstringyesingredientsstringnoJSON array [{ "id": 1, "amount": "200", "unit": "g" }, …].
-Response 201
-json{ "success": true, "message": "Recipe \"Tomato Soup\" saved successfully!", "pk_recipes": 42 }
-Errors: 401, 405, 409 (duplicate name), 422 (validation), 500.
-POST /add_ingredient.php
+
+| Field             | Type   | Required | Notes                                              |
+| ----------------- | ------ | -------- | -------------------------------------------------- |
+| `name`            | string | yes      | Must be unique.                                    |
+| `description`     | string | no       | "Created by &lt;username&gt;." is appended automatically. |
+| `imageUrl`        | string | no       | Must be a valid http(s) URL when provided.          |
+| `preparationTime` | int    | yes      | Positive minutes.                                  |
+| `category`        | int    | yes      | 1–4.                                               |
+| `difficulty`      | int    | yes      | 1–3.                                               |
+| `instructions`    | string | yes      |                                                    |
+| `ingredients`     | string | no       | JSON array `[{ "id": 1, "amount": "200", "unit": "g" }, …]`. |
+
+**Response 201**
+
+```json
+{ "success": true, "message": "Recipe \"Tomato Soup\" saved successfully!", "pk_recipes": 42 }
+```
+
+**Errors**: `401`, `405`, `409` (duplicate name), `422` (validation), `500`.
+
+#### `POST /add_ingredient.php`
+
 Adds a new ingredient inline from the recipe form.
-FieldRequirednameyescategoryyes
-Response 201
-json{ "success": true, "pk_ingredients": 88, "name": "Miso paste", "category": "Asian" }
-Errors: 401, 405, 409 (duplicate), 422.
 
-Generic CRUD demo (api.php)
-/backend/api/api.php is a small in-memory CRUD demo (no DB) that dispatches by HTTP method to get.php, post.php, put.php, or delete.php. It exposes a hard-coded list of three "items" and is not used by the recipe app — it's kept as a reference for the generic CRUD pattern.
-MethodBehaviourGETReturns all items, or one if ?infotype=…&id=… is passed.POSTForm-encoded name + beschreibung → echoes back a fake new item.PUTJSON body { id, name, beschreibung } (or ?id=…) → echoes back the update.DELETE?id=… → echoes back a deletion confirmation.
+| Field      | Required |
+| ---------- | -------- |
+| `name`     | yes      |
+| `category` | yes      |
 
-Authentication & Roles
+**Response 201**
 
-Passwords are hashed with PHP's password_hash(..., PASSWORD_DEFAULT) (bcrypt) and verified with password_verify.
-The session is a single cookie called user containing the pk_userId. It's set with a 90-day lifetime and the path /.
-All authentication-aware endpoints simply check $_COOKIE['user']; if absent or non-numeric they reject the request.
-Two roles exist: user (default) and administrator. The administrator dashboard at /backend/admin.php and every endpoint in administrator.php enforce the role server-side.
+```json
+{ "success": true, "pk_ingredients": 88, "name": "Miso paste", "category": "Asian" }
+```
 
+**Errors**: `401`, `405`, `409` (duplicate), `422`.
 
-Note: the cookie is not signed/encrypted. For a production deployment you'd want a proper session token (PHP sessions or a JWT) and CSRF protection on the state-changing endpoints.
+---
 
+### Generic CRUD demo (`api.php`)
 
-Frontend Architecture
-The frontend is intentionally framework-free. Scripts are loaded in dependency order from frontend/index.php:
+`/backend/api/api.php` is a small in-memory CRUD demo (no DB) that dispatches by HTTP method to `get.php`, `post.php`, `put.php`, or `delete.php`. It exposes a hard-coded list of three "items" and is **not used by the recipe app** — it's kept as a reference for the generic CRUD pattern.
 
-state.js — shared globals (current view, selected filters, …)
-api.js — every AJAX call, plus the combined local + Spoonacular wrappers
-recipes.js — list view rendering
-ingredients.js — ingredient sidebar
-detail.js — single-recipe detail view
-favorites.js — favorites stored in localStorage
-recipeForm.js — "create your own recipe" form (only used when logged in)
-events.js — event wiring
-app.js — bootstraps the app
+| Method | Behaviour                                                                          |
+| ------ | ---------------------------------------------------------------------------------- |
+| GET    | Returns all items, or one if `?infotype=…&id=…` is passed.                         |
+| POST   | Form-encoded `name` + `beschreibung` → echoes back a fake new item.                |
+| PUT    | JSON body `{ id, name, beschreibung }` (or `?id=…`) → echoes back the update.      |
+| DELETE | `?id=…` → echoes back a deletion confirmation.                                     |
 
-Local and Spoonacular results are tagged with source (local / spoonacular) and prefixed ids (local-7, spoon-640921) so they can coexist in a single list.
+---
 
-Authors
+## Authentication & Roles
 
-Chris
-Sarah
+- Passwords are hashed with PHP's `password_hash(..., PASSWORD_DEFAULT)` (bcrypt) and verified with `password_verify`.
+- The session is a single cookie called `user` containing the `pk_userId`. It's set with a 90-day lifetime and the path `/`.
+- All authentication-aware endpoints simply check `$_COOKIE['user']`; if absent or non-numeric they reject the request.
+- Two roles exist: `user` (default) and `administrator`. The administrator dashboard at `/backend/admin.php` and every endpoint in `administrator.php` enforce the role server-side.
+
+> **Note**: the cookie is not signed/encrypted. For a production deployment you'd want a proper session token (PHP sessions or a JWT) and CSRF protection on the state-changing endpoints.
+
+---
+
+## Frontend Architecture
+
+The frontend is intentionally framework-free. Scripts are loaded in dependency order from `frontend/index.php`:
+
+1. `state.js` — shared globals (current view, selected filters, …)
+2. `api.js` — every AJAX call, plus the combined local + Spoonacular wrappers
+3. `recipes.js` — list view rendering
+4. `ingredients.js` — ingredient sidebar
+5. `detail.js` — single-recipe detail view
+6. `favorites.js` — favorites stored in `localStorage`
+7. `recipeForm.js` — "create your own recipe" form (only used when logged in)
+8. `events.js` — event wiring
+9. `app.js` — bootstraps the app
+
+Local and Spoonacular results are tagged with `source` (`local` / `spoonacular`) and prefixed ids (`local-7`, `spoon-640921`) so they can coexist in a single list.
+
+---
+
+## Authors
+
+- **Chris**
+- **Sarah**
 
 A school project on full-stack web development — building a recipe app from scratch with PHP, MySQL, and vanilla JavaScript, and integrating with the external Spoonacular API.
