@@ -1,12 +1,9 @@
-CREATE DATABASE IF NOT EXISTS recipe;
-USE recipe;
-
 -- phpMyAdmin SQL Dump
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 27, 2026 at 07:31 PM
+-- Generation Time: Apr 29, 2026 at 01:34 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -23,6 +20,8 @@ SET time_zone = "+00:00";
 --
 -- Database: `recipe`
 --
+CREATE DATABASE IF NOT EXISTS `recipe` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `recipe`;
 
 -- --------------------------------------------------------
 
@@ -30,12 +29,11 @@ SET time_zone = "+00:00";
 -- Table structure for table `includes`
 --
 
--- links recipes to their ingredients — one recipe can have many ingredients, one ingredient can be in many recipes
 CREATE TABLE `includes` (
-  `pkfk_recipe` int(11) NOT NULL,      -- the ID of the recipe (foreign key → recipes.pk_recipes)
-  `pkfk_ingredient` int(11) NOT NULL,  -- the ID of the ingredient (foreign key → ingredients.pk_ingredients)
-  `amount` decimal(8,2) NOT NULL,      -- how much of the ingredient is needed (e.g. 2.50)
-  `unit` varchar(20) NOT NULL          -- the unit of measurement (e.g. 'g', 'ml', 'tbsp', 'piece')
+  `pkfk_recipe` int(11) NOT NULL,
+  `pkfk_ingredient` int(11) NOT NULL,
+  `amount` decimal(8,2) NOT NULL,
+  `unit` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -400,11 +398,10 @@ INSERT INTO `includes` (`pkfk_recipe`, `pkfk_ingredient`, `amount`, `unit`) VALU
 -- Table structure for table `ingredients`
 --
 
--- stores all available ingredients that can be used in recipes
 CREATE TABLE `ingredients` (
-  `pk_ingredients` int(11) NOT NULL, -- unique ID for each ingredient, auto-increments
-  `name` varchar(50) NOT NULL,       -- the ingredient's name (e.g. 'Garlic', 'Tomato')
-  `category` varchar(30) DEFAULT NULL -- the ingredient group (e.g. 'Vegetables', 'Spices', 'Dairy') — optional
+  `pk_ingredients` int(11) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `category` varchar(30) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -573,17 +570,16 @@ INSERT INTO `ingredients` (`pk_ingredients`, `name`, `category`) VALUES
 -- Table structure for table `recipes`
 --
 
--- stores all recipes with their full details
 CREATE TABLE `recipes` (
-  `pk_recipes` int(11) NOT NULL,       -- unique ID for each recipe, auto-increments
-  `name` varchar(100) NOT NULL,        -- the recipe's title (must be unique)
-  `description` text DEFAULT NULL,     -- a short summary of the dish (optional)
-  `imageUrl` varchar(255) DEFAULT NULL, -- URL to a photo of the dish (optional)
-  `preparationTime` int(11) NOT NULL,  -- total time in minutes to prepare and cook
-  `category` int(11) NOT NULL,         -- links to a category (1=Main Course, 2=Side Dish, 3=Soup, 4=Sweets)
-  `difficulty` int(11) NOT NULL,       -- links to a difficulty level (1=Easy, 2=Medium, 3=Hard)
-  `instructions` text NOT NULL,        -- the full step-by-step cooking instructions
-  `created` timestamp NOT NULL DEFAULT current_timestamp() -- automatically set when the recipe is inserted
+  `pk_recipes` int(11) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `description` text DEFAULT NULL,
+  `imageUrl` varchar(255) DEFAULT NULL,
+  `preparationTime` int(11) NOT NULL,
+  `category` int(11) NOT NULL,
+  `difficulty` int(11) NOT NULL,
+  `instructions` text NOT NULL,
+  `created` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -622,6 +618,31 @@ INSERT INTO `recipes` (`pk_recipes`, `name`, `description`, `imageUrl`, `prepara
 (29, 'Berry Cheesecake', 'Creamy New York-style cheesecake with berry topping and graham cracker crust.', 'https://img.delicious.com.au/WD-sxPh2/del/2016/05/jamie-olivers-baked-berry-cheesecake-30767-2.jpg', 180, 4, 3, '1. Make crust: mix 200g crushed graham crackers with 100g melted butter and 50g sugar\n2. Press into springform pan, bake at 180°C for 10 minutes\n3. Beat 900g cream cheese until smooth\n4. Gradually add 250g sugar\n5. Add 3 eggs one at a time\n6. Mix in 240ml sour cream, 1 tablespoon vanilla, lemon zest\n7. Pour over crust\n8. Bake at 160°C (325°F) for 60-70 minutes\n9. Turn off oven, let cool in oven for 1 hour\n10. Chill overnight\n11. Top with fresh berries before serving', '2026-01-27 15:13:20'),
 (30, 'Chocolate Chip Cookies', 'Classic chewy chocolate chip cookies with crisp edges and soft centers.', 'https://www.allrecipes.com/thmb/JCMYBY68TG5gPrZLIx8x_AgcVRg=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/9827-chocolate-chocolate-chip-cookies-i--DDMFS-092-4x3-c8227481fd804270a50256498cf8f05f.jpg', 30, 4, 1, '1. Preheat oven to 190°C (375°F)\n2. Line baking sheets with parchment\n3. Cream 225g butter with 150g brown sugar and 100g white sugar\n4. Add 2 eggs and 2 teaspoons vanilla\n5. Sift 325g flour with 1 teaspoon baking soda and 1/2 teaspoon salt\n6. Gradually add dry ingredients to wet\n7. Stir in 350g chocolate chips\n8. Drop tablespoonfuls onto baking sheets\n9. Bake for 9-11 minutes until golden\n10. Cool on baking sheet for 5 minutes\n11. Transfer to wire rack to cool completely', '2026-01-27 15:13:20');
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+CREATE TABLE `users` (
+  `pk_userId` int(11) NOT NULL,
+  `username` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `created` timestamp NOT NULL DEFAULT current_timestamp(),
+  `name` varchar(255) DEFAULT NULL,
+  `pfp` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`pk_userId`, `username`, `password`, `created`, `name`, `pfp`) VALUES
+(1, 'masmu123', 'pass123', '2026-04-15 10:21:52', 'Max Mustermann', NULL),
+(2, 'masmu', '$2y$10$QdszpePskXfGrQp9enWm.OifdUqVZCvKA22xeR5LcQBVJb6QZjhTu', '2026-04-15 10:45:37', 'max', 'https://shorturl.at/jkuPe'),
+(3, 'masu', '$2y$10$3y0cPX1H5GIB9yL2q6T9y.ApHhQD/pNOgo8rG1aZjirwxea.WyRgy', '2026-04-15 10:57:50', 'Max', 'https://shorturl.at/jkuPe'),
+(4, 'barch473', '$2y$10$YDjHcM0Mo4AvO9yYihhAlejfiL9mJhoaiaCaJNnKvLsq7xWoaCyU6', '2026-04-21 08:25:40', 'barch473', 'https://shorturl.at/jkuPe');
+
 --
 -- Indexes for dumped tables
 --
@@ -648,6 +669,12 @@ ALTER TABLE `recipes`
   ADD UNIQUE KEY `name` (`name`);
 
 --
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`pk_userId`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -662,6 +689,12 @@ ALTER TABLE `ingredients`
 --
 ALTER TABLE `recipes`
   MODIFY `pk_recipes` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+  MODIFY `pk_userId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables
