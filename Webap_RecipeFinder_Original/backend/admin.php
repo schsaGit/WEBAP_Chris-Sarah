@@ -36,7 +36,7 @@ if (!$isAdministrator) {
                 <h1>Admin</h1>
                 <p>Manage users and recipes.</p>
             </div>
-            <a href="../frontend/index.html"><button>Back to recipes</button></a>
+            <a href="../frontend/index.php"><button>Back to recipes</button></a>
         </div>
 
         <?php if (!$isAdministrator): ?>
