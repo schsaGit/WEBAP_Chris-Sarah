@@ -112,6 +112,35 @@ if (!mysqli_stmt_execute($stmt)) {
 $newId = mysqli_insert_id($conn); # the AUTO_INCREMENT id of the new row
 
 mysqli_stmt_close($stmt);
+
+# ── insert selected ingredients into the includes table ──────────────────────
+
+$ingredientsJson = trim($_POST['ingredients'] ?? '');
+
+if ($ingredientsJson !== '') {
+    $ingredientsList = json_decode($ingredientsJson, true);
+
+    if (is_array($ingredientsList) && count($ingredientsList) > 0) {
+        $inclStmt = mysqli_prepare($conn,
+            'INSERT INTO includes (pkfk_recipe, pkfk_ingredient, amount, unit) VALUES (?, ?, ?, ?)'
+        );
+
+        if ($inclStmt) {
+            foreach ($ingredientsList as $ing) {
+                $ingId  = intval($ing['id']     ?? 0);
+                $amount = trim($ing['amount']   ?? '');
+                $unit   = trim($ing['unit']     ?? '');
+
+                if ($ingId <= 0) { continue; } # skip malformed entries
+
+                mysqli_stmt_bind_param($inclStmt, 'iiss', $newId, $ingId, $amount, $unit);
+                mysqli_stmt_execute($inclStmt);
+            }
+            mysqli_stmt_close($inclStmt);
+        }
+    }
+}
+
 mysqli_close($conn);
 
 # return success with the new recipe's ID so the frontend can jump straight to its detail view
