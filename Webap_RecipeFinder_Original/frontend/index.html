@@ -1,12 +1,3 @@
-<?php
-if (isset($_GET['page']) && $_GET['page'] === 'login') {
-    include '../backend/api/login.php';
-    exit;
-}
-
-# check login state server-side so PHP can decide whether to render the button
-$isLoggedIn = isset($_COOKIE['user']) && is_numeric($_COOKIE['user']);
-?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -25,13 +16,6 @@ $isLoggedIn = isset($_COOKIE['user']) && is_numeric($_COOKIE['user']);
         <input type="text" id="search-input" placeholder="Search recipes..."> <!-- text field where the user types a search word -->
         <button id="search-btn">Search</button> <!-- triggers a recipe search using the text field value -->
         <button id="favorites-btn">❤️ Favorites</button> <!-- shows the user's saved favorite recipes -->
-
-        <?php if ($isLoggedIn): ?>
-            <!-- "Create Your Own Recipe" button — only visible when the user is logged in -->
-            <button id="create-recipe-btn" title="Create and submit your own recipe">🍳 Create Your Own Recipe</button>
-        <?php endif; ?>
-
-        <a href="?page=login"><button>Login</button></a>
     </div>
 
     <!-- main two-column layout: left sidebar (filters) + right content area -->
@@ -48,7 +32,7 @@ $isLoggedIn = isset($_COOKIE['user']) && is_numeric($_COOKIE['user']);
             </div>
 
             <button id="filter-btn">Filter recipes</button> <!-- filters recipes to show only those with ALL selected ingredients -->
-            <button id="clear-btn">Clear selection</button> <!-- unchecks all ingredients and reloads all recipes -->
+            <button id="clear-btn">Clear selection</button> <!-- unchecks all selected ingredients and reloads all recipes -->
 
             <h4>Category:</h4>
             <!-- dropdown for filtering by category (e.g. Main Course, Soup); options added by recipes.js -->
@@ -79,10 +63,10 @@ $isLoggedIn = isset($_COOKIE['user']) && is_numeric($_COOKIE['user']);
                 <div id="no-results" style="display: none;">No recipes found</div> <!-- shown when a search/filter returns nothing -->
             </div>
 
-            <!-- recipe detail view (hidden until a recipe is clicked or the create-form is opened) -->
+            <!-- recipe detail view (hidden until a recipe is clicked) -->
             <div id="detail-section" style="display: none;">
                 <button id="back-btn">← Back</button> <!-- goes back to the recipe list -->
-                <div id="recipe-detail"></div> <!-- filled with the full recipe details by detail.js, or the create-form by recipeForm.js -->
+                <div id="recipe-detail"></div> <!-- filled with the full recipe details by detail.js -->
             </div>
         </div>
     </div>
@@ -96,14 +80,13 @@ $isLoggedIn = isset($_COOKIE['user']) && is_numeric($_COOKIE['user']);
 
 <!-- Load order matters: state and api first, then feature modules, then event wiring, then entry point -->
 <!-- state.js and api.js must be first because all other files depend on them -->
-<script src="js/state.js"></script>       <!-- shared variables used across all modules -->
-<script src="js/api.js"></script>         <!-- functions that talk to the backend API -->
-<script src="js/recipes.js"></script>     <!-- loads and displays the recipe list -->
+<script src="js/state.js"></script>      <!-- shared variables used across all modules -->
+<script src="js/api.js"></script>        <!-- functions that talk to the backend API -->
+<script src="js/recipes.js"></script>    <!-- loads and displays the recipe list -->
 <script src="js/ingredients.js"></script> <!-- loads the ingredient filter panel -->
-<script src="js/detail.js"></script>      <!-- shows the full recipe detail view -->
-<script src="js/favorites.js"></script>   <!-- manages saving and loading favorite recipes -->
-<script src="js/recipeForm.js"></script>  <!-- create-your-own-recipe form (only used when logged in) -->
-<script src="js/events.js"></script>      <!-- wires all button clicks and input events to their handlers -->
-<script src="js/app.js"></script>         <!-- entry point: starts the app after everything else is loaded -->
+<script src="js/detail.js"></script>     <!-- shows the full recipe detail view -->
+<script src="js/favorites.js"></script>  <!-- manages saving and loading favorite recipes -->
+<script src="js/events.js"></script>     <!-- wires all button clicks and input events to their handlers -->
+<script src="js/app.js"></script>        <!-- entry point: starts the app after everything else is loaded -->
 </body>
 </html>

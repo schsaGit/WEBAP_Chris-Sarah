@@ -28,6 +28,12 @@ function setupEventListeners() {
     // favorites button: shows only the recipes the user has saved as favorites
     $('#favorites-btn').click(showFavorites);
 
+    // "Create Your Own Recipe" button — only rendered by index.php when the user is logged in,
+    // so this handler is a no-op for guests (the element simply doesn't exist in the DOM)
+    $('#create-recipe-btn').click(function() {
+        showRecipeForm(); // defined in recipeForm.js
+    });
+
     // filter button: shows only recipes that contain ALL selected ingredients
     $('#filter-btn').click(filterByIngredients);
 
@@ -78,6 +84,6 @@ function setupEventListeners() {
         }
     });
 
-    // back button: returns from the detail view to the recipe list
+    // back button: returns from the detail view (or the create-form) to the recipe list
     $('#back-btn').click(showRecipeList);
 }
