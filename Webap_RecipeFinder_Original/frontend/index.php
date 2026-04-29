@@ -1,3 +1,9 @@
+<?php
+if (isset($_GET['page']) && $_GET['page'] === 'login') {
+    include '../backend/api/login.php';
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -16,6 +22,7 @@
         <input type="text" id="search-input" placeholder="Search recipes..."> <!-- text field where the user types a search word -->
         <button id="search-btn">Search</button> <!-- triggers a recipe search using the text field value -->
         <button id="favorites-btn">❤️ Favorites</button> <!-- shows the user's saved favorite recipes -->
+        <a href="?page=login"><button>Login</button></a>
     </div>
 
     <!-- main two-column layout: left sidebar (filters) + right content area -->
